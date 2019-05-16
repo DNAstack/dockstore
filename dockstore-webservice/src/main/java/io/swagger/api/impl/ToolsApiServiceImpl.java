@@ -273,6 +273,12 @@ public class ToolsApiServiceImpl extends ToolsApiService implements Authenticate
         String author, Boolean checker, String offset, Integer limit, SecurityContext securityContext, ContainerRequestContext value, Optional<User> user) {
         final List<Entry> all = new ArrayList<>();
 
+        // It is very upsetting to see paging not being done via SQL
+
+        if (limit == null) {
+            limit = DEFAULT_PAGE_SIZE;
+        }
+
         // short circuit id and alias filters, these are a bit weird because they have a max of one result
         if (id != null) {
             ParsedRegistryID parsedID = new ParsedRegistryID(id);
@@ -281,12 +287,17 @@ public class ToolsApiServiceImpl extends ToolsApiService implements Authenticate
         } else if (alias != null) {
             all.add(toolDAO.getGenericEntryByAlias(alias));
         } else {
+            // This should respect the paging information instead of grabbing all
             all.addAll(toolDAO.findAllPublished());
-            all.addAll(workflowDAO.findAllPublished());
+            all.addAll(workflowDAO.findAllPublished(Optional.of(organization)));
+            // Really? sort? who says?
             all.sort(Comparator.comparing(Entry::getGitUrl));
         }
 
+
         List<io.swagger.model.Tool> results = new ArrayList<>();
+        // Why can't the filtering be done via sql?
+        // Rewrite as a stream filter? parallelize?
         for (Entry c : all) {
             // filters just for tools
             if (c instanceof Tool) {
@@ -358,6 +369,7 @@ public class ToolsApiServiceImpl extends ToolsApiService implements Authenticate
                     continue;
                 }
             }
+            // This seems like a costly operation -- why ????
             // if passing, for each container that matches the criteria, convert to standardised format and return
             io.swagger.model.Tool tool = ToolsImplCommon.convertEntryToTool(c, config);
             if (tool != null) {
@@ -365,9 +377,7 @@ public class ToolsApiServiceImpl extends ToolsApiService implements Authenticate
             }
         }
 
-        if (limit == null) {
-            limit = DEFAULT_PAGE_SIZE;
-        }
+
         List<List<io.swagger.model.Tool>> pagedResults = Lists.partition(results, limit);
         int offsetInteger = 0;
         if (offset != null) {

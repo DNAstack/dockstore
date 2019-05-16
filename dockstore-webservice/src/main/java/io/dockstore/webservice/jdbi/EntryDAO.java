@@ -171,6 +171,12 @@ public abstract class EntryDAO<T extends Entry> extends AbstractDockstoreDAO<T> 
         return list(namedQuery("io.dockstore.webservice.core." + typeOfT.getSimpleName() + ".findAllPublished"));
     }
 
+    public List<T> findAllPublished(Optional<String> organization) {
+        Query query = namedQuery("io.dockstore.webservice.core." + typeOfT.getSimpleName() + ".findAllPublishedOptional");
+        query.setParameter("organization", organization);
+        return list(query);
+    }
+
     public long countAllHosted(long userid) {
         return ((BigInteger)namedQuery("Entry.hostedWorkflowCount").setParameter("userid", userid).getSingleResult()).longValueExact();
     }

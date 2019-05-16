@@ -54,12 +54,16 @@ import org.hibernate.annotations.Check;
  *
  * @author dyuen
  */
+
+// Do this instead https://stackoverflow.com/questions/21062148/how-to-query-postgres-on-optional-params
+// make an omnibus query
 @ApiModel(value = "Workflow", description = "This describes one workflow in the dockstore")
 @Entity
 @NamedQueries({
         @NamedQuery(name = "io.dockstore.webservice.core.Workflow.findPublishedById", query = "SELECT c FROM Workflow c WHERE c.id = :id AND c.isPublished = true"),
         @NamedQuery(name = "io.dockstore.webservice.core.Workflow.countAllPublished", query = "SELECT COUNT(c.id)" + Workflow.PUBLISHED_QUERY),
         @NamedQuery(name = "io.dockstore.webservice.core.Workflow.findAllPublished", query = "SELECT c" + Workflow.PUBLISHED_QUERY + "ORDER BY size(c.starredUsers) DESC"),
+        @NamedQuery(name = "io.dockstore.webservice.core.Workflow.findAllPublishedOptional", query = "SELECT c" + Workflow.PUBLISHED_QUERY + "AND" + Workflow.OPTIONAL_REPOSITORY + "ORDER BY size(c.starredUsers) DESC"),
         @NamedQuery(name = "io.dockstore.webservice.core.Workflow.findByPath", query = "SELECT c FROM Workflow c WHERE c.sourceControl = :sourcecontrol AND c.organization = :organization AND c.repository = :repository"),
         @NamedQuery(name = "io.dockstore.webservice.core.Workflow.findPublishedByPath", query = "SELECT c FROM Workflow c WHERE c.sourceControl = :sourcecontrol AND c.organization = :organization AND c.repository = :repository AND c.isPublished = true"),
         @NamedQuery(name = "io.dockstore.webservice.core.Workflow.findByWorkflowPath", query = "SELECT c FROM Workflow c WHERE c.sourceControl = :sourcecontrol AND c.organization = :organization AND c.repository = :repository AND c.workflowName = :workflowname"),
@@ -74,6 +78,7 @@ import org.hibernate.annotations.Check;
 public class Workflow extends Entry<Workflow, WorkflowVersion> {
 
     static final String PUBLISHED_QUERY = " FROM Workflow c WHERE c.isPublished = true ";
+    static final String OPTIONAL_REPOSITORY = " (:repository is null or :repository='' or c.repository = :repository) ";
 
     @Column(nullable = false, columnDefinition = "Text default 'STUB'")
     @Enumerated(EnumType.STRING)
