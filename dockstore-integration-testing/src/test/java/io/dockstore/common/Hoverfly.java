@@ -144,7 +144,30 @@ public final class Hoverfly {
                     .willReturn(success(GITHUB_RATE_LIMIT, MediaType.APPLICATION_JSON))
 
                     .get("/user/orgs")
-                    .willReturn(success(GITHUB_ORGANIZATIONS, MediaType.APPLICATION_JSON)));
+                    .willReturn(success(GITHUB_ORGANIZATIONS, MediaType.APPLICATION_JSON))
+    );
+
+
+    public static final SimulationSource ZENODO_SIMULATION_SOURCE = dsl(
+            service("https://zenodo.org")
+
+                    .get("/api/deposit/depositions")
+                    .header("Authorization", (Object[])new String[] { "token " + SUFFIX1 })
+                    .willReturn(success(GITHUB_USER1, MediaType.APPLICATION_JSON))
+
+                    .get("/oauth/authorize")
+                    //.body(HoverflyMatchers.contains(getFakeCode(SUFFIX1)))
+                    .anyQueryParams()
+                    .willReturn(success(gson.toJson(getFakeTokenResponse(SUFFIX1)), MediaType.APPLICATION_JSON))
+
+                    .post("/oauth/token")
+                    //.body(HoverflyMatchers.contains(getFakeCode(SUFFIX1)))
+                    .anyQueryParams()
+                    .willReturn(success(gson.toJson(getFakeTokenResponse(SUFFIX1)), MediaType.APPLICATION_JSON))
+
+            );
+
+
 
     /**
      * <ul>

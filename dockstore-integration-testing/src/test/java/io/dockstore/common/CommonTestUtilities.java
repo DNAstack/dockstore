@@ -115,6 +115,21 @@ public final class CommonTestUtilities {
         runMigration(migrationList, application, dropwizardConfigurationFile);
     }
 
+
+    public static void dropAndCreateWithTestWorkflowAndWorkflowVersion(DropwizardTestSupport<DockstoreWebserviceConfiguration> support, boolean isNewApplication, String dropwizardConfigurationFile) throws Exception {
+        LOG.info("Dropping and Recreating the database with non-confidential test data");
+        Application<DockstoreWebserviceConfiguration> application;
+        if (isNewApplication) {
+            application = support.newApplication();
+        } else {
+            application= support.getApplication();
+        }
+        application.run("db", "drop-all", "--confirm-delete-everything", dropwizardConfigurationFile);
+
+        List<String> migrationList = Arrays.asList("1.3.0.generated", "1.3.1.consistency", "test", "1.4.0", "testworkflow", "1.5.0", "test_1.5.0", "1.6.0", "1.7.0");
+        runMigration(migrationList, application, dropwizardConfigurationFile);
+    }
+
     /**
      * Shared convenience method
      * @return
