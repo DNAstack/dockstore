@@ -152,21 +152,21 @@ public final class Hoverfly {
             service("https://zenodo.org")
 
                     .post("/oauth/token")
+                    //.post("/oauth/token")
                     //.body(HoverflyMatchers.contains(getFakeCode(SUFFIX1)))
+                    .anyBody()
                     .anyQueryParams()
                     .willReturn(success(gson.toJson(getFakeTokenResponse(SUFFIX1)), MediaType.APPLICATION_JSON))
 
-                    .get("/oauth/authorize")
-                    //.body(HoverflyMatchers.contains(getFakeCode(SUFFIX1)))
-                    .anyQueryParams()
-                    .willReturn(success(gson.toJson(getFakeTokenResponse(SUFFIX1)), MediaType.APPLICATION_JSON))
-
-                    .get("/api/deposit/depositions")
-                    .header("Authorization", (Object[])new String[] { "token " + SUFFIX1 })
-                    .willReturn(success(GITHUB_USER1, MediaType.APPLICATION_JSON))
-
-
-
+                     .get("/oauth/authorize")
+                     .anyBody()
+                     //.body(HoverflyMatchers.contains(getFakeCode(SUFFIX1)))
+                     .anyQueryParams()
+                     .willReturn(success(gson.toJson(getFakeTokenResponse(SUFFIX1)), MediaType.APPLICATION_JSON))
+                    //
+                    // .get("/api/deposit/depositions")
+                    // .header("Authorization", (Object[])new String[] { "token " + SUFFIX1 })
+                    // .willReturn(success(GITHUB_USER1, MediaType.APPLICATION_JSON))
             );
 
 

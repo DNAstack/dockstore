@@ -1,5 +1,7 @@
 package io.dockstore.webservice;
 
+import java.io.File;
+import java.net.ProxySelector;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -17,8 +19,12 @@ import io.dockstore.webservice.core.BioWorkflow;
 import io.dockstore.webservice.core.Token;
 import io.dockstore.webservice.core.TokenType;
 import io.dockstore.webservice.jdbi.TokenDAO;
+import io.dropwizard.client.HttpClientConfiguration;
+import io.dropwizard.client.proxy.ProxyConfiguration;
+import io.dropwizard.client.ssl.TlsConfiguration;
 import io.dropwizard.testing.ConfigOverride;
 import io.dropwizard.testing.DropwizardTestSupport;
+import io.dropwizard.testing.ResourceHelpers;
 import io.specto.hoverfly.junit.rule.HoverflyRule;
 import io.swagger.client.ApiClient;
 import io.swagger.client.api.HostedApi;
@@ -46,8 +52,8 @@ import org.junit.experimental.categories.Category;
 import org.junit.rules.ExpectedException;
 
 import static io.dockstore.common.CommonTestUtilities.getWebClient;
-import static io.dockstore.common.Hoverfly.ZENODO_SIMULATION_SOURCE;
 import static io.dockstore.common.Hoverfly.SUFFIX1;
+import static io.dockstore.common.Hoverfly.ZENODO_SIMULATION_SOURCE;
 import static io.dockstore.common.Hoverfly.getFakeCode;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -56,10 +62,38 @@ import static org.junit.Assert.assertNotNull;
 public class ZenodoResourceIT {
 
     private static final String DROPWIZARD_CONFIGURATION_FILE_PATH = CommonTestUtilities.PUBLIC_CONFIG_PATH;
+    //public static final String LOCAL_TRUST_STORE_PATH = ResourceHelpers.resourceFilePath("LocalTrustStore");
+
+
+    // public static final DropwizardTestSupport<DockstoreWebserviceConfiguration> createDropWizardTestSupport() {
+    //
+    //     HttpClientConfiguration zenodoHttpClientConfiguration = new HttpClientConfiguration();
+    //
+    //     TlsConfiguration zenodoTlsConfiguration = new TlsConfiguration();
+    //     File tlsTrustStoreFile = new File(LOCAL_TRUST_STORE_PATH);
+    //     zenodoTlsConfiguration.setTrustStorePath(tlsTrustStoreFile);
+    //     zenodoTlsConfiguration.setTrustStorePassword("changeit");
+    //
+    //     zenodoHttpClientConfiguration.setTlsConfiguration(zenodoTlsConfiguration);
+    //
+    //     DockstoreWebserviceConfiguration zenodoDockstoreWebserviceConfiguration = new DockstoreWebserviceConfiguration();
+    //     zenodoDockstoreWebserviceConfiguration.setHttpClientConfiguration(zenodoHttpClientConfiguration);
+    //     zenodoDockstoreWebserviceConfiguration.setZenodoClientID(getFakeCode(SUFFIX1));
+    //     zenodoDockstoreWebserviceConfiguration.setZenodoClientSecret(getFakeCode(SUFFIX1));
+    //     zenodoDockstoreWebserviceConfiguration.setDatabase;
+    //
+    //     return new DropwizardTestSupport<>(DockstoreWebserviceApplication.class, zenodoDockstoreWebserviceConfiguration);
+    //
+    // };
 
     public static final DropwizardTestSupport<DockstoreWebserviceConfiguration> SUPPORT = new DropwizardTestSupport<>(
             DockstoreWebserviceApplication.class, DROPWIZARD_CONFIGURATION_FILE_PATH, ConfigOverride.config("zenodoClientID", getFakeCode(SUFFIX1)),
             ConfigOverride.config("zenodoClientSecret", getFakeCode(SUFFIX1)));
+
+
+    //public static final DropwizardTestSupport<DockstoreWebserviceConfiguration> SUPPORT = createDropWizardTestSupport();
+
+
     public static final long ZENODO_USER1_ID = 1L;
     private static TestingPostgres testingPostgres;
     @Rule
