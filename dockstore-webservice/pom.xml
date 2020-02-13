@@ -1043,7 +1043,7 @@
                 <artifactId>swagger-maven-plugin</artifactId>
                 <version>${openapi-annotations-version}</version>
                 <configuration>
-                    <outputFileName>openapi</outputFileName>
+                    <outputFileName>unsortedopenapi</outputFileName>
                     <outputPath>${pom.basedir}/src/main/resources/openapi3</outputPath>
                     <outputFormat>YAML</outputFormat>
                     <prettyPrint>true</prettyPrint>
@@ -1065,6 +1065,22 @@
                         <goals>
                             <goal>resolve</goal>
                         </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <artifactId>exec-maven-plugin</artifactId>
+                <groupId>org.codehaus.mojo</groupId>
+                <executions>
+                    <execution><!-- Run our version calculation script -->
+                        <id>Version Calculation</id>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>exec</goal>
+                        </goals>
+                        <configuration>
+                            <executable>${basedir}/scripts/sortOpenAPIYaml.sh</executable>
+                        </configuration>
                     </execution>
                 </executions>
             </plugin>
