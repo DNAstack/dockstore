@@ -21,6 +21,9 @@ jobs:
           environment:
             DOCKERIZE_VERSION: v0.3.0
       - run: 
+          name: Install snap
+          command: sudo apt install snapd
+      - run: 
           name: Install yq
           command: sudo snap install yq 
       - run:
