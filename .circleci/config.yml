@@ -21,14 +21,8 @@ jobs:
           environment:
             DOCKERIZE_VERSION: v0.3.0
       - run: 
-          name: Install snap
-          command: sudo apt update && sudo apt install snapd
-      - run:
-          name: Run snap
-          command: sudo systemctl restart snapd.service
-      - run: 
           name: Install yq
-          command: sudo snap install yq 
+          command: sudo add-apt-repository ppa:rmescandon/yq && sudo apt update && sudo apt install yq -y
       - run:
           name: Wait for db
           command: dockerize -wait tcp://localhost:5432 -timeout 1m
