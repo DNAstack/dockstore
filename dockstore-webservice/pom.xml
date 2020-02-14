@@ -1072,9 +1072,9 @@
                 <artifactId>exec-maven-plugin</artifactId>
                 <groupId>org.codehaus.mojo</groupId>
                 <executions>
-                    <execution><!-- Run our version calculation script -->
-                        <id>Version Calculation</id>
-                        <phase>generate-sources</phase>
+                    <execution>
+                        <id>Sort OpenAPI.yaml</id>
+                        <phase>process-classes</phase>
                         <goals>
                             <goal>exec</goal>
                         </goals>
