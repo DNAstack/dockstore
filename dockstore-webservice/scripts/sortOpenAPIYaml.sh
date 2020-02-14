@@ -1,1 +1,1 @@
-yq r --tojson src/main/resources/openapi3/unsortedopenapi.yaml | yq r - -P > src/main/resources/openapi3/openapi.yaml
+yq r --tojson src/main/resources/openapi3/unsortedopenapi.yaml | yq r - > src/main/resources/openapi3/openapi.yaml
