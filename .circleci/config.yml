@@ -24,7 +24,7 @@ jobs:
           name: Install yq
           command: |
             wget https://github.com/mikefarah/yq/releases/download/3.1.1/yq_linux_amd64
-            mv yq_linux_amd64 /usr/bin/yq
+            sudo mv yq_linux_amd64 /usr/bin/yq
       - run:
           name: Wait for db
           command: dockerize -wait tcp://localhost:5432 -timeout 1m
