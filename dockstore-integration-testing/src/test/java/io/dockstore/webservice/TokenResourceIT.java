@@ -157,7 +157,7 @@ public class TokenResourceIT {
         // check that the user has the correct two tokens
         List<Token> tokens = tokenDAO.findByUserId(token.getUserId());
         Assert.assertEquals(2, tokens.size());
-        assertTrue(tokens.stream().anyMatch(t -> t.getTokenSource() == TokenType.GOOGLE_COM));
+        assertTrue(tokens.stream().anyMatch(t -> t.getTokenSource() == TokenType.OIDC));
         assertTrue(tokens.stream().anyMatch(t -> t.getTokenSource() == TokenType.DOCKSTORE));
 
         // Check that the token has the right info but ignore randomly generated content
@@ -166,7 +166,7 @@ public class TokenResourceIT {
         Assert.assertEquals(GOOGLE_ACCOUNT_USERNAME1, token.getUsername());
         Assert.assertEquals(fakeExistingDockstoreToken.getTokenSource().toString(), token.getTokenSource());
         Assert.assertEquals(100, token.getId().longValue());
-        checkUserProfiles(token.getUserId(), Collections.singletonList(TokenType.GOOGLE_COM.toString()));
+        checkUserProfiles(token.getUserId(), Collections.singletonList(TokenType.OIDC.toString()));
 
         // check that the tokens work
         ApiClient webClient = getWebClient(false, "n/a", testingPostgres);
@@ -517,7 +517,7 @@ public class TokenResourceIT {
         // check that the user ends up with the correct two tokens
         byUserId = tokenDAO.findByUserId(token.getUserId());
         Assert.assertEquals(2, byUserId.size());
-        assertTrue(byUserId.stream().anyMatch(t -> t.getTokenSource() == TokenType.GOOGLE_COM));
+        assertTrue(byUserId.stream().anyMatch(t -> t.getTokenSource() == TokenType.OIDC));
         assertTrue(byUserId.stream().anyMatch(t -> t.getTokenSource() == TokenType.DOCKSTORE));
 
         // Check that the token has the right info but ignore randomly generated content
@@ -526,7 +526,7 @@ public class TokenResourceIT {
         Assert.assertEquals(GITHUB_ACCOUNT_USERNAME, token.getUsername());
         Assert.assertEquals(fakeExistingDockstoreToken.getTokenSource().toString(), token.getTokenSource());
         Assert.assertEquals(2, token.getId().longValue());
-        checkUserProfiles(token.getUserId(), Arrays.asList(TokenType.GOOGLE_COM.toString(), TokenType.GITHUB_COM.toString()));
+        checkUserProfiles(token.getUserId(), Arrays.asList(TokenType.OIDC.toString(), TokenType.GITHUB_COM.toString()));
     }
 
     /**
@@ -546,7 +546,7 @@ public class TokenResourceIT {
         // fake user should start with the previously created google token
         byUserId = tokenDAO.findByUserId(id);
         Assert.assertEquals(2, byUserId.size());
-        assertTrue(byUserId.stream().anyMatch(t -> t.getTokenSource() == TokenType.GOOGLE_COM));
+        assertTrue(byUserId.stream().anyMatch(t -> t.getTokenSource() == TokenType.OIDC));
         assertTrue(byUserId.stream().anyMatch(t -> t.getTokenSource() == TokenType.DOCKSTORE));
 
         // going back to the first user, we want to add a github token to their profile
@@ -557,7 +557,7 @@ public class TokenResourceIT {
         Assert.assertEquals(3, byUserId.size());
         assertTrue(byUserId.stream().anyMatch(t -> t.getTokenSource() == TokenType.GITHUB_COM));
         assertTrue(byUserId.stream().anyMatch(t -> t.getTokenSource() == TokenType.DOCKSTORE));
-        assertTrue(byUserId.stream().anyMatch(t -> t.getTokenSource() == TokenType.GOOGLE_COM));
+        assertTrue(byUserId.stream().anyMatch(t -> t.getTokenSource() == TokenType.OIDC));
 
         // Check that the token has the right info but ignore randomly generated content
         Token fakeExistingDockstoreToken = getFakeExistingDockstoreToken();
@@ -565,7 +565,7 @@ public class TokenResourceIT {
         Assert.assertEquals(GITHUB_ACCOUNT_USERNAME, token.getUsername());
         Assert.assertEquals(fakeExistingDockstoreToken.getTokenSource().toString(), token.getTokenSource());
         Assert.assertEquals(2, token.getId().longValue());
-        checkUserProfiles(token.getUserId(), Arrays.asList(TokenType.GOOGLE_COM.toString(), TokenType.GITHUB_COM.toString()));
+        checkUserProfiles(token.getUserId(), Arrays.asList(TokenType.OIDC.toString(), TokenType.GITHUB_COM.toString()));
     }
 
     /**
@@ -578,7 +578,7 @@ public class TokenResourceIT {
         User user = userDAO.findById(userId);
         Map<String, User.Profile> userProfiles = user.getUserProfiles();
         profileKeys.forEach(profileKey -> assertTrue(userProfiles.containsKey(profileKey)));
-        if (profileKeys.contains(TokenType.GOOGLE_COM.toString())) {
+        if (profileKeys.contains(TokenType.OIDC.toString())) {
             checkGoogleUserProfile(userProfiles);
         }
     }
@@ -589,7 +589,7 @@ public class TokenResourceIT {
      * @param userProfiles the user profile to look into and validate
      */
     private void checkGoogleUserProfile(Map<String, User.Profile> userProfiles) {
-        User.Profile googleProfile = userProfiles.get(TokenType.GOOGLE_COM.toString());
+        User.Profile googleProfile = userProfiles.get(TokenType.OIDC.toString());
         assertTrue(googleProfile.email.equals(GOOGLE_ACCOUNT_USERNAME1) && googleProfile.avatarURL
             .equals("https://dockstore.org/assets/images/dockstore/logo.png") && googleProfile.company == null
             && googleProfile.location == null && googleProfile.name.equals("Beef Stew"));

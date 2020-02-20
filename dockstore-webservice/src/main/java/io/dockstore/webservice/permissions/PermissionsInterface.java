@@ -166,7 +166,7 @@ public interface PermissionsInterface {
         return workflow.getUsers().stream()
                 .map(user -> {
                     // This is ugly in order to support both SAM and InMemory authorizers
-                    final User.Profile profile = user.getUserProfiles().get(TokenType.GOOGLE_COM.toString());
+                    final User.Profile profile = user.getUserProfiles().get(TokenType.OIDC.toString());
                     if (profile != null && profile.email != null) {
                         return profile.email;
                     } else {

@@ -117,6 +117,37 @@ paths:
                 $ref: '#/components/schemas/Collection'
       security:
       - bearer: []
+  /organizations/collections/{collectionId}/aliases:
+    post:
+      tags:
+      - organizations
+      summary: Add aliases linked to a collection in Dockstore.
+      description: Aliases are alphanumerical (case-insensitive and may contain internal
+        hyphens), given in a comma-delimited list.
+      operationId: addCollectionAliases_1
+      parameters:
+      - name: collectionId
+        in: path
+        description: Collection to modify.
+        required: true
+        schema:
+          type: integer
+          format: int64
+      - name: aliases
+        in: query
+        description: Comma-delimited list of aliases.
+        required: true
+        schema:
+          type: string
+      responses:
+        default:
+          description: default response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Aliasable'
+      security:
+      - bearer: []
   /organizations/collections/{alias}/aliases:
     get:
       tags:
@@ -138,42 +169,13 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Collection'
-  /organizations/{organizationName}/collections/{collectionName}/name:
-    get:
-      tags:
-      - organizations
-      summary: Retrieve a collection by name.
-      description: Retrieve a collection by name. Supports optional authentication.
-      operationId: getCollectionById
-      parameters:
-      - name: organizationName
-        in: path
-        description: Organization name.
-        required: true
-        schema:
-          type: string
-      - name: collectionName
-        in: path
-        description: Collection name.
-        required: true
-        schema:
-          type: string
-      responses:
-        default:
-          description: default response
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Collection'
-      security:
-      - bearer: []
   /organizations/{organizationId}/collections/{collectionId}:
     get:
       tags:
       - organizations
       summary: Retrieve a collection by ID.
       description: Retrieve a collection by ID. Supports optional authentication.
-      operationId: getCollectionById_1
+      operationId: getCollectionById
       parameters:
       - name: organizationId
         in: path
@@ -227,6 +229,35 @@ paths:
             schema:
               $ref: '#/components/schemas/Collection'
         required: true
+      responses:
+        default:
+          description: default response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Collection'
+      security:
+      - bearer: []
+  /organizations/{organizationName}/collections/{collectionName}/name:
+    get:
+      tags:
+      - organizations
+      summary: Retrieve a collection by name.
+      description: Retrieve a collection by name. Supports optional authentication.
+      operationId: getCollectionById_1
+      parameters:
+      - name: organizationName
+        in: path
+        description: Organization name.
+        required: true
+        schema:
+          type: string
+      - name: collectionName
+        in: path
+        description: Collection name.
+        required: true
+        schema:
+          type: string
       responses:
         default:
           description: default response
@@ -372,37 +403,6 @@ paths:
             schema:
               type: string
         required: true
-      responses:
-        default:
-          description: default response
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Collection'
-      security:
-      - bearer: []
-  /organizations/collections/{collectionId}/aliases:
-    post:
-      tags:
-      - organizations
-      summary: Add aliases linked to a collection in Dockstore.
-      description: Aliases are alphanumerical (case-insensitive and may contain internal
-        hyphens), given in a comma-delimited list.
-      operationId: addCollectionAliases_1
-      parameters:
-      - name: collectionId
-        in: path
-        description: Collection to modify.
-        required: true
-        schema:
-          type: integer
-          format: int64
-      - name: aliases
-        in: query
-        description: Comma-delimited list of aliases.
-        required: true
-        schema:
-          type: string
       responses:
         default:
           description: default response
@@ -1394,6 +1394,47 @@ paths:
             text/plain:
               schema:
                 type: string
+  /users/{userId}:
+    get:
+      tags:
+      - users
+      operationId: getSpecificUser
+      parameters:
+      - name: userId
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      requestBody:
+        content:
+          '*/*':
+            schema:
+              $ref: '#/components/schemas/User'
+      responses:
+        default:
+          description: default response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+  /users/user:
+    get:
+      tags:
+      - users
+      operationId: getUser
+      requestBody:
+        content:
+          '*/*':
+            schema:
+              $ref: '#/components/schemas/User'
+      responses:
+        default:
+          description: default response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
   /users/users/organizations:
     get:
       tags:
@@ -1542,47 +1583,6 @@ paths:
                   $ref: '#/components/schemas/Repository'
       security:
       - bearer: []
-  /users/{userId}:
-    get:
-      tags:
-      - users
-      operationId: getSpecificUser
-      parameters:
-      - name: userId
-        in: path
-        required: true
-        schema:
-          type: integer
-          format: int64
-      requestBody:
-        content:
-          '*/*':
-            schema:
-              $ref: '#/components/schemas/User'
-      responses:
-        default:
-          description: default response
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/User'
-  /users/user:
-    get:
-      tags:
-      - users
-      operationId: getUser
-      requestBody:
-        content:
-          '*/*':
-            schema:
-              $ref: '#/components/schemas/User'
-      responses:
-        default:
-          description: default response
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/User'
   /workflows/registries/{gitRegistry}/organizations/{organization}/repositories/{repositoryName}:
     post:
       tags:
@@ -2783,6 +2783,8 @@ components:
     Config:
       type: object
       properties:
+        autoRegister:
+          type: boolean
         bdCatalystSevenBridgesImportUrl:
           type: string
         bdCatalystTerraImportUrl:
@@ -2821,10 +2823,10 @@ components:
           type: string
         gitlabScope:
           type: string
-        googleClientId:
-          type: string
         googleScope:
           type: string
+        oidcProvider:
+          $ref: '#/components/schemas/OidcProviderConfig'
         quayIoAuthUrl:
           type: string
         quayIoClientId:
@@ -2844,6 +2846,17 @@ components:
         zenodoRedirectPath:
           type: string
         zenodoScope:
+          type: string
+    OidcProviderConfig:
+      type: object
+      properties:
+        authorizationEndpoint:
+          type: string
+        clientId:
+          type: string
+        providerName:
+          type: string
+        scope:
           type: string
     RegistryBean:
       type: object

@@ -60,7 +60,7 @@ import com.google.common.base.MoreObjects;
 import com.google.common.collect.ComparisonChain;
 import io.dockstore.webservice.CustomWebApplicationException;
 import io.dockstore.webservice.helpers.GitHubSourceCodeRepo;
-import io.dockstore.webservice.helpers.GoogleHelper;
+import io.dockstore.webservice.helpers.OidcHelper;
 import io.dockstore.webservice.helpers.SourceCodeRepoFactory;
 import io.dockstore.webservice.jdbi.TokenDAO;
 import io.swagger.annotations.ApiModel;
@@ -237,14 +237,14 @@ public class User implements Principal, Comparable<User>, Serializable {
      */
     public void updateUserMetadata(final TokenDAO tokenDAO, TokenType source) {
         if (source == null) {
-            if (!updateGoogleMetadata(tokenDAO) && !updateGithubMetadata(tokenDAO)) {
+            if (!updateOidcMetadata(tokenDAO) && !updateGithubMetadata(tokenDAO)) {
                 throw new CustomWebApplicationException(
-                        "No GitHub or Google token found.  Please link a GitHub or Google token to your account.", HttpStatus.SC_FORBIDDEN);
+                        "No GitHub or OIDC token found.  Please link a GitHub or OIDC token to your account.", HttpStatus.SC_FORBIDDEN);
             }
         } else {
             switch (source) {
-            case GOOGLE_COM:
-                if (!updateGoogleMetadata(tokenDAO)) {
+            case OIDC:
+                if (!updateOidcMetadata(tokenDAO)) {
                     throw new CustomWebApplicationException("No Google token found.  Please link a Google token to your account.",
                             HttpStatus.SC_FORBIDDEN);
                 }
@@ -255,6 +255,7 @@ public class User implements Principal, Comparable<User>, Serializable {
                             HttpStatus.SC_FORBIDDEN);
                 }
                 break;
+
             default:
                 throw new CustomWebApplicationException("Unrecognized token type: " + source, HttpStatus.SC_BAD_REQUEST);
             }
@@ -280,21 +281,62 @@ public class User implements Principal, Comparable<User>, Serializable {
         }
     }
 
+
+    //    /**
+    //     * Retrieves info from Google and updates the user metadata
+    //     * @param token The Google access token
+    //     * @param user  The pre-updated user
+    //     */
+    //    public static boolean updateGoogleUserData(String token, User user) {
+    //        return userinfoplusFromToken(token)
+    //                .map(userinfoPlus -> {
+    //                    updateUserFromGoogleUserinfoplus(userinfoPlus, user);
+    //                    return true;
+    //                })
+    //                .orElse(false);
+    //    }
+
+    //    /**
+    //     * Updates the User object's metadata using the Userinfoplus object provided by Google
+    //     * @param userinfo  The object provided by Google
+    //     * @param user      The pre-updated User object
+    //     */
+    //    public static void updateUserFromGoogleUserinfoplus(Userinfoplus userinfo, User user) {
+    //        User.Profile profile = new User.Profile();
+    //        profile.avatarURL = userinfo.getPicture();
+    //        profile.email = userinfo.getEmail();
+    //        profile.name = userinfo.getName();
+    //        profile.username = userinfo.getEmail();
+    //        user.setAvatarUrl(userinfo.getPicture());
+    //        Map<String, User.Profile> userProfile = user.getUserProfiles();
+    //        userProfile.put(TokenType.OIDC.toString(), profile);
+    //    }
+
     /**
      * Tries to update the user's Google profile
      *
      * @param tokenDAO The TokenDAO to access the user's tokens
      * @return True if the user has a Google token and updating the Google profile was successful
      */
-    private boolean updateGoogleMetadata(final TokenDAO tokenDAO) {
-        List<Token> googleByUserId = tokenDAO.findGoogleByUserId(getId());
-        if (googleByUserId.isEmpty()) {
+    private boolean updateOidcMetadata(final TokenDAO tokenDAO) {
+        List<Token> tokensByUserId = tokenDAO.findGoogleByUserId(getId());
+        if (tokensByUserId.isEmpty()) {
             return false;
         } else {
-            Token googleToken = googleByUserId.get(0);
-            return GoogleHelper.updateGoogleUserData(googleToken.getContent(), this);
+            Token oidcToken = tokensByUserId.get(0);
+
+            return OidcHelper.getUserProfile(oidcToken.getToken())
+                      .map(userProfile -> {
+                          setAvatarUrl(userProfile.avatarURL);
+                          return getUserProfiles().put(TokenType.OIDC.toString(), userProfile) != null;
+                      })
+                      .orElse(false);
+
+
+            //return GoogleHelper.updateGoogleUserData(googleToken.getContent(), this);
         }
     }
+
 
     @JsonProperty
     public long getId() {

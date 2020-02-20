@@ -67,7 +67,7 @@ import io.dockstore.webservice.core.Version;
 import io.dockstore.webservice.core.Workflow;
 import io.dockstore.webservice.core.WorkflowMode;
 import io.dockstore.webservice.helpers.EntryVersionHelper;
-import io.dockstore.webservice.helpers.GoogleHelper;
+import io.dockstore.webservice.helpers.OidcHelper;
 import io.dockstore.webservice.helpers.PublicStateManager;
 import io.dockstore.webservice.helpers.SourceCodeRepoFactory;
 import io.dockstore.webservice.helpers.SourceCodeRepoInterface;
@@ -742,8 +742,8 @@ public class UserResource implements AuthenticatedResourceInterface {
     @ApiOperation(value = "Update metadata for logged in user.", authorizations = { @Authorization(value = JWT_SECURITY_DEFINITION_NAME) }, response = User.class)
     public User updateLoggedInUserMetadata(@ApiParam(hidden = true) @Auth User user, @ApiParam(value = "Token source", allowableValues = "google.com, github.com") @QueryParam("source") TokenType source) {
         User dbuser = userDAO.findById(user.getId());
-        if (source.equals(TokenType.GOOGLE_COM)) {
-            updateGoogleAccessToken(user.getId());
+        if (source.equals(TokenType.OIDC)) {
+            updateOidcAccessToken(user.getId());
         }
         dbuser.updateUserMetadata(tokenDAO, source);
         return dbuser;
@@ -900,15 +900,14 @@ public class UserResource implements AuthenticatedResourceInterface {
      * Updates the user's google access token in the DB
      * @param userId    The user's ID
      */
-    private void updateGoogleAccessToken(Long userId) {
-        List<Token> googleByUserId = tokenDAO.findGoogleByUserId(userId);
-        if (!googleByUserId.isEmpty()) {
-            Token googleToken = googleByUserId.get(0);
-            Optional<String> validAccessToken = GoogleHelper
-                    .getValidAccessToken(googleToken);
+    private void updateOidcAccessToken(Long userId) {
+        List<Token> oidcTokenByUserId = tokenDAO.findGoogleByUserId(userId);
+        if (!oidcTokenByUserId.isEmpty()) {
+            Token oidcToken = oidcTokenByUserId.get(0);
+            Optional<String> validAccessToken = OidcHelper.getValidAccessToken(oidcToken);
             if (validAccessToken.isPresent()) {
-                googleToken.setContent(validAccessToken.get());
-                tokenDAO.update(googleToken);
+                oidcToken.setContent(validAccessToken.get());
+                tokenDAO.update(oidcToken);
             }
         }
     }

@@ -39,8 +39,8 @@ public enum TokenType {
     GITLAB_COM("gitlab.com", SourceControl.GITLAB),
     @JsonProperty("zenodo.org")
     ZENODO_ORG("zenodo.org", null),
-    @JsonProperty("google.com")
-    GOOGLE_COM("google.com", null);
+    @JsonProperty("oidc")
+    OIDC("oidc", null);
     private final String friendlyName;
     private final SourceControl sourceControl;
 

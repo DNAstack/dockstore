@@ -3,7 +3,7 @@ info:
   description: This describes the dockstore API, a webservice that manages pairs of Docker
     images and associated metadata such as CWL documents and Dockerfiles used to
     build those images
-  version: 1.8.1-SNAPSHOT
+  version: 1.8.2-SNAPSHOT
   title: Dockstore API
   termsOfService: TBD
   contact:
@@ -1379,13 +1379,19 @@ paths:
                 $ref: "#/components/schemas/Token"
       security:
         - BEARER: []
-  /auth/tokens/google:
+  "/auth/tokens/oidc/{oidcProvider}":
     post:
       tags:
         - tokens
-      summary: Allow satellizer to post a new Google token to Dockstore.
-      description: A post method is required by satellizer to send the Google token
-      operationId: addGoogleToken
+      summary: Allow satellizer to post a new OIDC token to Dockstore.
+      description: A post method is required by satellizer to send the OIDC token
+      operationId: addOidcToken
+      parameters:
+        - name: oidcProvider
+          in: path
+          required: true
+          schema:
+            type: string
       requestBody:
         $ref: "#/components/requestBodies/addTokenBody"
       responses:
@@ -6776,6 +6782,8 @@ components:
     Config:
       type: object
       properties:
+        autoRegister:
+          type: boolean
         bdCatalystSevenBridgesImportUrl:
           type: string
         bdCatalystTerraImportUrl:
@@ -6814,10 +6822,10 @@ components:
           type: string
         gitlabScope:
           type: string
-        googleClientId:
-          type: string
         googleScope:
           type: string
+        oidcProvider:
+          $ref: "#/components/schemas/OidcProviderConfig"
         quayIoAuthUrl:
           type: string
         quayIoClientId:
@@ -7404,6 +7412,19 @@ components:
           type: string
           format: date-time
           description: Timestamp at which the notification was last updated
+    OidcProviderConfig:
+      type: object
+      properties:
+        authorizationEndpoint:
+          type: string
+        clientId:
+          type: string
+        providerName:
+          type: string
+        scope:
+          type: string
+      description: Configuration information for an OIDC Provider for UI clients of the
+        Dockstore webservice.
     Organization:
       type: object
       required:
@@ -7828,6 +7849,9 @@ components:
           format: int64
           description: Implementation specific ID for the token in this web service
           readOnly: true
+        tokenExpiry:
+          type: string
+          format: date-time
         tokenSource:
           type: string
           description: Source website for this token

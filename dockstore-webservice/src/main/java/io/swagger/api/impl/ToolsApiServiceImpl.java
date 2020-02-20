@@ -75,12 +75,7 @@ import org.apache.http.HttpStatus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static io.dockstore.common.DescriptorLanguage.FileType.CWL_TEST_JSON;
-import static io.dockstore.common.DescriptorLanguage.FileType.DOCKERFILE;
-import static io.dockstore.common.DescriptorLanguage.FileType.DOCKSTORE_CWL;
-import static io.dockstore.common.DescriptorLanguage.FileType.DOCKSTORE_WDL;
-import static io.dockstore.common.DescriptorLanguage.FileType.NEXTFLOW_TEST_PARAMS;
-import static io.dockstore.common.DescriptorLanguage.FileType.WDL_TEST_JSON;
+import static io.dockstore.common.DescriptorLanguage.FileType.*;
 import static io.swagger.api.impl.ToolsImplCommon.SERVICE_PREFIX;
 import static io.swagger.api.impl.ToolsImplCommon.WORKFLOW_PREFIX;
 
@@ -269,7 +264,6 @@ public class ToolsApiServiceImpl extends ToolsApiService implements Authenticate
     public Response toolsGet(String id, String alias, String registry, String organization, String name, String toolname,
         String description, String author, Boolean checker, String offset, Integer limit, SecurityContext securityContext,
         ContainerRequestContext value, Optional<User> user) {
-
         final Integer hashcode = new HashCodeBuilder().append(id).append(alias).append(registry).append(organization).append(name)
             .append(toolname).append(description).append(author).append(checker).append(offset).append(limit)
             .append(user.orElseGet(User::new).getId()).build();

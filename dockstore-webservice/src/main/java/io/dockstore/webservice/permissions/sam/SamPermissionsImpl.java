@@ -20,7 +20,7 @@ import io.dockstore.webservice.core.Token;
 import io.dockstore.webservice.core.TokenType;
 import io.dockstore.webservice.core.User;
 import io.dockstore.webservice.core.Workflow;
-import io.dockstore.webservice.helpers.GoogleHelper;
+import io.dockstore.webservice.helpers.OidcHelper;
 import io.dockstore.webservice.jdbi.TokenDAO;
 import io.dockstore.webservice.permissions.Permission;
 import io.dockstore.webservice.permissions.PermissionsInterface;
@@ -284,7 +284,7 @@ public class SamPermissionsImpl implements PermissionsInterface {
             if (email.equals(u.getUsername())) {
                 return true;
             }
-            final User.Profile profile = u.getUserProfiles().get(TokenType.GOOGLE_COM.toString());
+            final User.Profile profile = u.getUserProfiles().get(TokenType.OIDC.toString());
             return profile != null && email.equals(profile.email);
         });
         if (isOwner) {
@@ -417,7 +417,7 @@ public class SamPermissionsImpl implements PermissionsInterface {
             }
         };
         apiClient.setBasePath(config.getSamConfiguration().getBasepath());
-        return googleAccessToken(user).map(credentials -> {
+        return getOidcAccessToken(user).map(credentials -> {
             apiClient.setAccessToken(credentials);
             return apiClient;
         }).orElseThrow(() -> new CustomWebApplicationException("Could not get Google access token. Try relinking your Google account.", HttpStatus.SC_UNAUTHORIZED));
@@ -436,13 +436,13 @@ public class SamPermissionsImpl implements PermissionsInterface {
      * @param user
      * @return
      */
-    Optional<String> googleAccessToken(User user) {
+    Optional<String> getOidcAccessToken(User user) {
         if (user.getTemporaryCredential() != null) {
             return Optional.of(user.getTemporaryCredential());
         }
-        Token token = googleToken(user);
+        Token token = getOIdcToken(user);
         if (token != null) {
-            return GoogleHelper.getValidAccessToken(token).map(accessToken -> {
+            return OidcHelper.getValidAccessToken(token).map(accessToken -> {
                 if (!accessToken.equals(token.getToken())) {
                     token.setContent(accessToken);
                     tokenDAO.update(token);
@@ -453,13 +453,13 @@ public class SamPermissionsImpl implements PermissionsInterface {
         return Optional.empty();
     }
 
-    Token googleToken(User user) {
+    Token getOIdcToken(User user) {
         List<Token> tokens = tokenDAO.findByUserId(user.getId());
-        return Token.extractToken(tokens, TokenType.GOOGLE_COM);
+        return Token.extractToken(tokens, TokenType.OIDC);
     }
 
     boolean hasGoogleToken(User user) {
-        return user.getTemporaryCredential() != null || googleToken(user) != null;
+        return user.getTemporaryCredential() != null || getOIdcToken(user) != null;
     }
 
     /**
