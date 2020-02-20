@@ -1,8 +1,14 @@
 FROM maven:3.6.2-jdk-11 AS maven
 
-COPY . /
-RUN mvn clean install -DskipTests
+# Preinitialize to take better advantage of docker layer caching, and avoid redownloading dependencies
+# when the pom has not changed.
+ADD dockstore-webservice/pom.xml /dockstore-webservice/pom.xml
+RUN cd dockstore-webservice && mvn -B -Presolve-dependencies initialize
 
+COPY . /
+
+#RUN cd dockstore-webservice && mvn clean install -DskipTests && cd ..
+RUN cd dockstore-webservice && mvn -B -o package && cd ..
 FROM ubuntu:18.04
 
 # Update the APT cache

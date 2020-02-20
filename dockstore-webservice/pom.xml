@@ -47,6 +47,12 @@
         </dependency>
         <dependency>
             <groupId>io.dropwizard</groupId>
+            <artifactId>dropwizard-configuration</artifactId>
+            <version>${dropwizard.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>io.dropwizard</groupId>
             <artifactId>dropwizard-logging</artifactId>
             <version>${dropwizard.version}</version>
         </dependency>
@@ -970,36 +976,36 @@
                     </execution>
                 </executions>
             </plugin>
-            <plugin>
-                <!-- use this to check out the difference between webservice_test and webservice_test_old
-                     note that target/detected-migrations.xml will be redundantly appended to each time if not empty
-                -->
-                <groupId>org.liquibase</groupId>
-                <artifactId>liquibase-maven-plugin</artifactId>
-                <version>3.6.3</version>
-                <configuration>
-                    <driver>org.postgresql.Driver</driver>
-                    <referenceDriver>org.postgresql.Driver</referenceDriver>
-                    <username>dockstore</username>
-                    <referenceUsername>dockstore</referenceUsername>
-                    <password>dockstore</password>
-                    <referencePassword>dockstore</referencePassword>
-                    <url>jdbc:postgresql://localhost:5432/webservice_test</url>
-                    <referenceUrl>jdbc:postgresql://localhost:5432/webservice_test_proposed</referenceUrl>
+<!--            <plugin>-->
+<!--                &lt;!&ndash; use this to check out the difference between webservice_test and webservice_test_old-->
+<!--                     note that target/detected-migrations.xml will be redundantly appended to each time if not empty-->
+<!--                &ndash;&gt;-->
+<!--                <groupId>org.liquibase</groupId>-->
+<!--                <artifactId>liquibase-maven-plugin</artifactId>-->
+<!--                <version>3.6.3</version>-->
+<!--                <configuration>-->
+<!--                    <driver>org.postgresql.Driver</driver>-->
+<!--                    <referenceDriver>org.postgresql.Driver</referenceDriver>-->
+<!--                    <username>dockstore</username>-->
+<!--                    <referenceUsername>dockstore</referenceUsername>-->
+<!--                    <password>dockstore</password>-->
+<!--                    <referencePassword>dockstore</referencePassword>-->
+<!--                    <url>jdbc:postgresql://localhost:5432/webservice_test</url>-->
+<!--                    <referenceUrl>jdbc:postgresql://localhost:5432/webservice_test_proposed</referenceUrl>-->
 
-                    <changeLogFile>src/main/resources/migrations.xml</changeLogFile>
-                    <logging>info</logging>
-                    <diffChangeLogFile>target/detected-migrations.xml</diffChangeLogFile>
-                </configuration>
-                <dependencies>
-                    <dependency>
-                        <groupId>org.postgresql</groupId>
-                        <artifactId>postgresql</artifactId>
-                        <version>${postgresql.version}</version>
-                        <scope>runtime</scope>
-                    </dependency>
-                </dependencies>
-            </plugin>
+<!--                    <changeLogFile>src/main/resources/db.changelog-master.yaml</changeLogFile>-->
+<!--                    <logging>info</logging>-->
+<!--                    <diffChangeLogFile>target/detected-migrations.xml</diffChangeLogFile>-->
+<!--                </configuration>-->
+<!--                <dependencies>-->
+<!--                    <dependency>-->
+<!--                        <groupId>org.postgresql</groupId>-->
+<!--                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      <artifactId>postgresql</artifactId>-->
+<!--                        <version>${postgresql.version}</version>-->
+<!--                        <scope>runtime</scope>-->
+<!--                    </dependency>-->
+<!--                </dependencies>-->
+<!--            </plugin>-->
             <plugin>
                 <groupId>com.github.kongchen</groupId>
                 <artifactId>swagger-maven-plugin</artifactId>

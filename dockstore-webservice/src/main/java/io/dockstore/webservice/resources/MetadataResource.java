@@ -91,6 +91,7 @@ import okhttp3.Cache;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpStatus;
+import org.apache.http.client.HttpClient;
 import org.hibernate.SessionFactory;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -122,8 +123,9 @@ public class MetadataResource {
     private final DockstoreWebserviceConfiguration config;
     private final SitemapListener sitemapListener;
     private final RSSListener rssListener;
+    private final HttpClient httpClient;
 
-    public MetadataResource(SessionFactory sessionFactory, DockstoreWebserviceConfiguration config) {
+    public MetadataResource(SessionFactory sessionFactory, DockstoreWebserviceConfiguration config, HttpClient httpClient) {
         this.toolDAO = new ToolDAO(sessionFactory);
         this.workflowDAO = new WorkflowDAO(sessionFactory);
         this.organizationDAO = new OrganizationDAO(sessionFactory);
@@ -133,6 +135,7 @@ public class MetadataResource {
         this.serviceDAO = new ServiceDAO(sessionFactory);
         this.sitemapListener = PublicStateManager.getInstance().getSitemapListener();
         this.rssListener = PublicStateManager.getInstance().getRSSListener();
+        this.httpClient = httpClient;
     }
 
     @GET
@@ -409,7 +412,7 @@ public class MetadataResource {
     @ApiOperation(value = "Configuration for UI clients of the API", notes = "NO authentication")
     public Config getConfig() {
         try {
-            return Config.fromWebConfig(this.config);
+            return Config.fromWebConfig(this.config, httpClient);
         } catch (InvocationTargetException | IllegalAccessException e) {
             LOG.error("Error generating config response", e);
             throw new CustomWebApplicationException("Error retrieving config information", HttpStatus.SC_INTERNAL_SERVER_ERROR);

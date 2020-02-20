@@ -42,7 +42,7 @@ public class InMemoryPermissionsImplTest {
 
         User.Profile profile = new User.Profile();
         profile.email = JOHN_DOE_EXAMPLE_COM;
-        johnDoeUser.getUserProfiles().put(TokenType.GOOGLE_COM.toString(), profile);
+        johnDoeUser.getUserProfiles().put(TokenType.OIDC.toString(), profile);
         johnDoeUser.setUsername(JOHN_DOE_EXAMPLE_COM);
         johnDoeUser.getEntries().add(fooWorkflow);
 

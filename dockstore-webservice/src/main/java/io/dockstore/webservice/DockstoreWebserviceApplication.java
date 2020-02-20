@@ -53,9 +53,9 @@ import io.dockstore.webservice.core.Workflow;
 import io.dockstore.webservice.core.WorkflowVersion;
 import io.dockstore.webservice.doi.DOIGeneratorFactory;
 import io.dockstore.webservice.helpers.CacheConfigManager;
-import io.dockstore.webservice.helpers.GoogleHelper;
 import io.dockstore.webservice.helpers.MetadataResourceHelper;
 import io.dockstore.webservice.helpers.ObsoleteUrlFactory;
+import io.dockstore.webservice.helpers.OidcHelper;
 import io.dockstore.webservice.helpers.PersistenceExceptionMapper;
 import io.dockstore.webservice.helpers.PublicStateManager;
 import io.dockstore.webservice.helpers.TransactionExceptionMapper;
@@ -95,6 +95,8 @@ import io.dropwizard.auth.AuthValueFactoryProvider;
 import io.dropwizard.auth.CachingAuthenticator;
 import io.dropwizard.auth.oauth.OAuthCredentialAuthFilter;
 import io.dropwizard.client.HttpClientBuilder;
+import io.dropwizard.configuration.EnvironmentVariableSubstitutor;
+import io.dropwizard.configuration.SubstitutingSourceProvider;
 import io.dropwizard.db.DataSourceFactory;
 import io.dropwizard.forms.MultiPartBundle;
 import io.dropwizard.hibernate.HibernateBundle;
@@ -142,6 +144,8 @@ public class DockstoreWebserviceApplication extends Application<DockstoreWebserv
     private static final int KILOBYTES_IN_MEGABYTE = 1024;
     private static final int CACHE_IN_MB = 100;
     private static Cache cache = null;
+    private static HttpClient httpClient;
+
 
     private final HibernateBundle<DockstoreWebserviceConfiguration> hibernate = new HibernateBundle<DockstoreWebserviceConfiguration>(
             Token.class, Tool.class, User.class, Tag.class, Label.class, SourceFile.class, Workflow.class, CollectionOrganization.class,
@@ -168,6 +172,11 @@ public class DockstoreWebserviceApplication extends Application<DockstoreWebserv
 
     @Override
     public void initialize(Bootstrap<DockstoreWebserviceConfiguration> bootstrap) {
+
+        //Enable environment variable substitution in YAML
+        bootstrap.setConfigurationSourceProvider(new SubstitutingSourceProvider(
+                bootstrap.getConfigurationSourceProvider(),
+                new EnvironmentVariableSubstitutor(true)));
 
         configureMapper(bootstrap.getObjectMapper());
 
@@ -271,7 +280,7 @@ public class DockstoreWebserviceApplication extends Application<DockstoreWebserv
         environment.jersey().register(new AuthValueFactoryProvider.Binder<>(User.class));
         environment.jersey().register(RolesAllowedDynamicFeature.class);
 
-        final HttpClient httpClient = new HttpClientBuilder(environment).using(configuration.getHttpClientConfiguration()).build(getName());
+        this.httpClient = new HttpClientBuilder(environment).using(configuration.getHttpClientConfiguration()).build(getName());
 
         final PermissionsInterface authorizer = PermissionsFactory.getAuthorizer(tokenDAO, configuration);
 
@@ -293,7 +302,7 @@ public class DockstoreWebserviceApplication extends Application<DockstoreWebserv
 
         MetadataResourceHelper.init(configuration);
 
-        environment.jersey().register(new MetadataResource(getHibernate().getSessionFactory(), configuration));
+        environment.jersey().register(new MetadataResource(getHibernate().getSessionFactory(), configuration, httpClient));
         environment.jersey().register(new HostedToolResource(getHibernate().getSessionFactory(), authorizer, configuration.getLimitConfig()));
         environment.jersey().register(new HostedWorkflowResource(getHibernate().getSessionFactory(), authorizer, configuration.getLimitConfig()));
         environment.jersey().register(new OrganizationResource(getHibernate().getSessionFactory()));
@@ -319,7 +328,8 @@ public class DockstoreWebserviceApplication extends Application<DockstoreWebserv
 
         DOIGeneratorFactory.setConfig(configuration);
 
-        GoogleHelper.setConfig(configuration);
+        OidcHelper.setHttpClient(httpClient);
+        OidcHelper.setOidcProvider(configuration.getOidcProvider());
 
         ToolsApi toolsApi = new ToolsApi(null);
         environment.jersey().register(toolsApi);

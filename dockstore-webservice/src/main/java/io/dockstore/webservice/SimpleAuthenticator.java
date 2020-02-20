@@ -18,10 +18,8 @@ package io.dockstore.webservice;
 
 import java.util.Optional;
 
-import com.google.api.services.oauth2.model.Userinfoplus;
 import io.dockstore.webservice.core.Token;
 import io.dockstore.webservice.core.User;
-import io.dockstore.webservice.helpers.GoogleHelper;
 import io.dockstore.webservice.jdbi.TokenDAO;
 import io.dockstore.webservice.jdbi.UserDAO;
 import io.dropwizard.auth.Authenticator;
@@ -47,17 +45,17 @@ public class SimpleAuthenticator implements Authenticator<String, User> {
     /**
      * Authenticates the credentials.
      *
-     * Valid credentials can either be a Dockstore token or a Google token, if the Google token
+     * Valid credentials can either be a Dockstore token or a Google access token, if the Google access token
      * is issued against a whitelisted Google client id.
      *
-     * @param credentials
+     * @param tokenContent
      * @return an optional user
      */
     @UnitOfWork
     @Override
-    public Optional<User> authenticate(String credentials) {
-        LOG.debug("SimpleAuthenticator called with {}", credentials);
-        final Token token = dao.findByContent(credentials);
+    public Optional<User> authenticate(String tokenContent) {
+        LOG.debug("SimpleAuthenticator called with {}", tokenContent);
+        final Token token = dao.findByContent(tokenContent);
         if (token != null) { // It's a valid Dockstore token
             User byId = userDAO.findById(token.getUserId());
             if (byId.isBanned()) {
@@ -65,19 +63,34 @@ public class SimpleAuthenticator implements Authenticator<String, User> {
             }
             initializeUserProfiles(byId);
             return Optional.of(byId);
-        } else { // It might be a Google token
-            return userinfoPlusFromToken(credentials)
-                    .map(userinfoPlus -> {
-                        final String email = userinfoPlus.getEmail();
-                        User user = userDAO.findByGoogleEmail(email);
-                        if (user == null) {
-                            user = createUser(userinfoPlus);
-                        }
-                        user.setTemporaryCredential(credentials);
-                        initializeUserProfiles(user);
-                        return Optional.of(user);
-                    }).filter(user -> !user.get().isBanned())
-                    .orElse(Optional.empty());
+        } else { // It might be an OIDC access token
+            LOG.warn("Could not locate token record corresponding to content " + tokenContent);
+            return Optional.empty();
+            //            return OidcHelper.getUserProfile(credentials)
+            //                    .map(userProfile -> {
+            //                        final String email = userProfile.email;
+            //                        User user = userDAO.findByGoogleEmail(email);
+            //                        if (user == null) {
+            //                            user = createUser(userProfile);
+            //                        }
+            //                        user.setTemporaryCredential(credentials);
+            //                        initializeUserProfiles(user);
+            //                        return Optional.of(user);
+            //                    }).filter(user -> !user.get().isBanned())
+            //                    .orElse(Optional.empty());
+            //
+            //            return userinfoPlusFromToken(credentials)
+            //                    .map(userinfoPlus -> {
+            //                        final String email = userinfoPlus.getEmail();
+            //                        User user = userDAO.findByGoogleEmail(email);
+            //                        if (user == null) {
+            //                            user = createUser(userinfoPlus);
+            //                        }
+            //                        user.setTemporaryCredential(credentials);
+            //                        initializeUserProfiles(user);
+            //                        return Optional.of(user);
+            //                    }).filter(user -> !user.get().isBanned())
+            //                    .orElse(Optional.empty());
         }
     }
 
@@ -86,15 +99,25 @@ public class SimpleAuthenticator implements Authenticator<String, User> {
         Hibernate.initialize(user.getUserProfiles());
     }
 
-    Optional<Userinfoplus> userinfoPlusFromToken(String credentials) {
-        return GoogleHelper.userinfoplusFromToken(credentials);
-    }
+    //    Optional<Userinfoplus> userinfoPlusFromToken(String credentials) {
+    //        return GoogleHelper.userinfoplusFromToken(credentials);
+    //    }
 
-    User createUser(Userinfoplus userinfoPlus) {
-        User user = new User();
-        GoogleHelper.updateUserFromGoogleUserinfoplus(userinfoPlus, user);
-        user.setUsername(userinfoPlus.getEmail());
-        return user;
-    }
+    //    User createUser(User.Profile userProfile) {
+    //        User user = new User();
+    //        user.setAvatarUrl(userProfile.avatarURL);
+    //        Map<String, User.Profile> userProfiles = user.getUserProfiles();
+    //        userProfiles.put(TokenType.OIDC.toString(), userProfile);
+    //        return user;
+    //
+    //        user.setAvatarUrl(userinfo.getPicture());
+    //        Map<String, User.Profile> userProfile = user.getUserProfiles();
+    //        userProfile.put(TokenType.OIDC.toString(), profile);
+    //        User user = new User();
+    //        user.setAvatarUrl(userinfo.getPicture());
+    //        GoogleHelper.updateUserFromGoogleUserinfoplus(userinfoPlus, user);
+    //        user.setUsername(userinfoPlus.getEmail());
+    //        return user;
+    //    }
 
 }

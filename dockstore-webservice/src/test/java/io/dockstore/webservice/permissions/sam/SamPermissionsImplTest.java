@@ -110,8 +110,8 @@ public class SamPermissionsImplTest {
         DockstoreWebserviceConfiguration configMock = Mockito.mock(DockstoreWebserviceConfiguration.class);
         when(configMock.getSamConfiguration()).thenReturn(new DockstoreWebserviceConfiguration.SamConfiguration());
         samPermissionsImpl = Mockito.spy(new SamPermissionsImpl(tokenDAO, configMock));
-        doReturn(Optional.of("my token")).when(samPermissionsImpl).googleAccessToken(userMock);
-        doReturn(Mockito.mock(Token.class)).when(samPermissionsImpl).googleToken(userMock);
+        doReturn(Optional.of("my token")).when(samPermissionsImpl).getOidcAccessToken(userMock);
+        doReturn(Mockito.mock(Token.class)).when(samPermissionsImpl).getOIdcToken(userMock);
         resourcesApiMock = Mockito.mock(ResourcesApi.class);
         ApiClient apiClient = Mockito.mock(ApiClient.class);
         when(apiClient.escapeString(ArgumentMatchers.anyString()))
@@ -147,7 +147,7 @@ public class SamPermissionsImplTest {
         final User.Profile profile = new User.Profile();
         profile.email = JANE_DOE_GMAIL_COM;
         final Map<String, User.Profile> map = new HashMap<>();
-        map.put(TokenType.GOOGLE_COM.toString(), profile);
+        map.put(TokenType.OIDC.toString(), profile);
         when(userMock.getUserProfiles()).thenReturn(map);
     }
 

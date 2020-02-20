@@ -1,0 +1,2036 @@
+databaseChangeLog:
+- changeSet:
+    id: 1582148453365-1
+    author: jim (generated)
+    changes:
+    - createSequence:
+        sequenceName: container_id_seq
+- changeSet:
+    id: 1582148453365-2
+    author: jim (generated)
+    changes:
+    - createSequence:
+        sequenceName: tag_id_seq
+- changeSet:
+    id: 1582148453365-3
+    author: jim (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            autoIncrement: true
+            constraints:
+              primaryKey: true
+              primaryKeyName: collection_pkey
+            name: id
+            type: BIGSERIAL
+        - column:
+            name: dbcreatedate
+            type: TIMESTAMP WITHOUT TIME ZONE
+        - column:
+            name: dbupdatedate
+            type: TIMESTAMP WITHOUT TIME ZONE
+        - column:
+            name: description
+            type: TEXT
+        - column:
+            constraints:
+              nullable: false
+            name: displayname
+            type: VARCHAR(50)
+        - column:
+            constraints:
+              nullable: false
+            name: name
+            type: VARCHAR(39)
+        - column:
+            name: organizationid
+            type: BIGINT
+        - column:
+            name: topic
+            type: VARCHAR(255)
+        tableName: collection
+- changeSet:
+    id: 1582148453365-4
+    author: jim (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            constraints:
+              primaryKey: true
+              primaryKeyName: collection_alias_pkey
+            name: id
+            type: BIGINT
+        - column:
+            name: content
+            type: TEXT
+        - column:
+            name: dbcreatedate
+            type: TIMESTAMP WITHOUT TIME ZONE
+        - column:
+            name: dbupdatedate
+            type: TIMESTAMP WITHOUT TIME ZONE
+        - column:
+            constraints:
+              primaryKey: true
+              primaryKeyName: collection_alias_pkey
+            name: alias
+            type: TEXT
+        tableName: collection_alias
+- changeSet:
+    id: 1582148453365-5
+    author: jim (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            constraints:
+              primaryKey: true
+              primaryKeyName: collection_entry_pkey
+            name: collectionid
+            type: BIGINT
+        - column:
+            constraints:
+              primaryKey: true
+              primaryKeyName: collection_entry_pkey
+            name: entryid
+            type: BIGINT
+        tableName: collection_entry
+- changeSet:
+    id: 1582148453365-6
+    author: jim (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            autoIncrement: true
+            constraints:
+              primaryKey: true
+              primaryKeyName: enduser_pkey
+            name: id
+            type: BIGSERIAL
+        - column:
+            name: avatarurl
+            type: TEXT
+        - column:
+            defaultValueBoolean: false
+            name: curator
+            type: BOOLEAN
+        - column:
+            name: dbcreatedate
+            type: TIMESTAMP WITHOUT TIME ZONE
+        - column:
+            name: dbupdatedate
+            type: TIMESTAMP WITHOUT TIME ZONE
+        - column:
+            name: hostedentrycountlimit
+            type: INTEGER
+        - column:
+            name: hostedentryversionslimit
+            type: INTEGER
+        - column:
+            name: isadmin
+            type: BOOLEAN
+        - column:
+            defaultValueBoolean: false
+            name: isbanned
+            type: BOOLEAN
+        - column:
+            defaultValue: NONE
+            name: privacypolicyversion
+            type: TEXT
+        - column:
+            name: privacypolicyversionacceptancedate
+            type: TIMESTAMP WITHOUT TIME ZONE
+        - column:
+            defaultValueBoolean: false
+            name: setupcomplete
+            type: BOOLEAN
+        - column:
+            defaultValue: NONE
+            name: tosversion
+            type: TEXT
+        - column:
+            name: tosversionacceptancedate
+            type: TIMESTAMP WITHOUT TIME ZONE
+        - column:
+            constraints:
+              nullable: false
+            name: username
+            type: VARCHAR(255)
+        tableName: enduser
+- changeSet:
+    id: 1582148453365-7
+    author: jim (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            constraints:
+              primaryKey: true
+              primaryKeyName: entry_alias_pkey
+            name: id
+            type: BIGINT
+        - column:
+            name: content
+            type: TEXT
+        - column:
+            name: dbcreatedate
+            type: TIMESTAMP WITHOUT TIME ZONE
+        - column:
+            name: dbupdatedate
+            type: TIMESTAMP WITHOUT TIME ZONE
+        - column:
+            constraints:
+              primaryKey: true
+              primaryKeyName: entry_alias_pkey
+            name: alias
+            type: TEXT
+        tableName: entry_alias
+- changeSet:
+    id: 1582148453365-8
+    author: jim (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            constraints:
+              nullable: false
+            name: entry_id
+            type: BIGINT
+        - column:
+            name: blacklistedversionnames
+            type: TEXT
+        tableName: entry_blacklistedversionnames
+- changeSet:
+    id: 1582148453365-9
+    author: jim (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            constraints:
+              primaryKey: true
+              primaryKeyName: entry_defaultpaths_pkey
+            name: entry_id
+            type: BIGINT
+        - column:
+            constraints:
+              nullable: false
+            name: path
+            type: VARCHAR(255)
+        - column:
+            constraints:
+              primaryKey: true
+              primaryKeyName: entry_defaultpaths_pkey
+            name: filetype
+            type: VARCHAR(255)
+        tableName: entry_defaultpaths
+- changeSet:
+    id: 1582148453365-10
+    author: jim (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            constraints:
+              primaryKey: true
+              primaryKeyName: entry_label_pkey
+            name: entryid
+            type: BIGINT
+        - column:
+            constraints:
+              primaryKey: true
+              primaryKeyName: entry_label_pkey
+            name: labelid
+            type: BIGINT
+        tableName: entry_label
+- changeSet:
+    id: 1582148453365-11
+    author: jim (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            constraints:
+              primaryKey: true
+              primaryKeyName: entry_version_image_pkey
+            name: versionid
+            type: BIGINT
+        - column:
+            constraints:
+              primaryKey: true
+              primaryKeyName: entry_version_image_pkey
+            name: imageid
+            type: BIGINT
+        tableName: entry_version_image
+- changeSet:
+    id: 1582148453365-12
+    author: jim (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            autoIncrement: true
+            constraints:
+              primaryKey: true
+              primaryKeyName: event_pkey
+            name: id
+            type: BIGSERIAL
+        - column:
+            name: dbcreatedate
+            type: TIMESTAMP WITHOUT TIME ZONE
+        - column:
+            name: dbupdatedate
+            type: TIMESTAMP WITHOUT TIME ZONE
+        - column:
+            name: type
+            type: VARCHAR(255)
+        - column:
+            name: collectionid
+            type: BIGINT
+        - column:
+            name: initiatoruserid
+            type: BIGINT
+        - column:
+            name: organizationid
+            type: BIGINT
+        - column:
+            name: toolid
+            type: BIGINT
+        - column:
+            name: userid
+            type: BIGINT
+        - column:
+            name: workflowid
+            type: BIGINT
+        tableName: event
+- changeSet:
+    id: 1582148453365-13
+    author: jim (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            autoIncrement: true
+            constraints:
+              primaryKey: true
+              primaryKeyName: fileformat_pkey
+            name: id
+            type: BIGSERIAL
+        - column:
+            name: dbcreatedate
+            type: TIMESTAMP WITHOUT TIME ZONE
+        - column:
+            name: dbupdatedate
+            type: TIMESTAMP WITHOUT TIME ZONE
+        - column:
+            name: value
+            type: TEXT
+        tableName: fileformat
+- changeSet:
+    id: 1582148453365-14
+    author: jim (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            autoIncrement: true
+            constraints:
+              primaryKey: true
+              primaryKeyName: image_pkey
+            name: id
+            type: BIGSERIAL
+        - column:
+            name: checksums
+            type: VARCHAR
+        - column:
+            name: dbcreatedate
+            type: TIMESTAMP WITHOUT TIME ZONE
+        - column:
+            name: dbupdatedate
+            type: TIMESTAMP WITHOUT TIME ZONE
+        - column:
+            name: image_id
+            type: VARCHAR(255)
+        - column:
+            name: repository
+            type: VARCHAR(255)
+        - column:
+            name: tag
+            type: VARCHAR(255)
+        tableName: image
+- changeSet:
+    id: 1582148453365-15
+    author: jim (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            autoIncrement: true
+            constraints:
+              primaryKey: true
+              primaryKeyName: label_pkey
+            name: id
+            type: BIGSERIAL
+        - column:
+            name: dbcreatedate
+            type: TIMESTAMP WITHOUT TIME ZONE
+        - column:
+            name: dbupdatedate
+            type: TIMESTAMP WITHOUT TIME ZONE
+        - column:
+            name: value
+            type: VARCHAR(255)
+        tableName: label
+- changeSet:
+    id: 1582148453365-16
+    author: jim (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            autoIncrement: true
+            constraints:
+              primaryKey: true
+              primaryKeyName: notification_pkey
+            name: id
+            type: BIGSERIAL
+        - column:
+            name: dbcreatedate
+            type: TIMESTAMP WITHOUT TIME ZONE
+        - column:
+            name: dbupdatedate
+            type: TIMESTAMP WITHOUT TIME ZONE
+        - column:
+            name: expiration
+            type: TIMESTAMP WITHOUT TIME ZONE
+        - column:
+            name: message
+            type: VARCHAR(280)
+        - column:
+            name: priority
+            type: VARCHAR(255)
+        - column:
+            name: type
+            type: VARCHAR(255)
+        tableName: notification
+- changeSet:
+    id: 1582148453365-17
+    author: jim (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            autoIncrement: true
+            constraints:
+              primaryKey: true
+              primaryKeyName: organization_pkey
+            name: id
+            type: BIGSERIAL
+        - column:
+            name: avatarurl
+            type: VARCHAR(255)
+        - column:
+            name: dbcreatedate
+            type: TIMESTAMP WITHOUT TIME ZONE
+        - column:
+            name: dbupdatedate
+            type: TIMESTAMP WITHOUT TIME ZONE
+        - column:
+            name: description
+            type: TEXT
+        - column:
+            constraints:
+              nullable: false
+            name: displayname
+            type: VARCHAR(50)
+        - column:
+            name: email
+            type: VARCHAR(255)
+        - column:
+            name: link
+            type: VARCHAR(255)
+        - column:
+            name: location
+            type: VARCHAR(255)
+        - column:
+            constraints:
+              nullable: false
+            name: name
+            type: VARCHAR(39)
+        - column:
+            constraints:
+              nullable: false
+            defaultValue: PENDING
+            name: status
+            type: TEXT
+        - column:
+            name: topic
+            type: VARCHAR(255)
+        tableName: organization
+- changeSet:
+    id: 1582148453365-18
+    author: jim (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            constraints:
+              primaryKey: true
+              primaryKeyName: organization_alias_pkey
+            name: id
+            type: BIGINT
+        - column:
+            name: content
+            type: TEXT
+        - column:
+            name: dbcreatedate
+            type: TIMESTAMP WITHOUT TIME ZONE
+        - column:
+            name: dbupdatedate
+            type: TIMESTAMP WITHOUT TIME ZONE
+        - column:
+            constraints:
+              primaryKey: true
+              primaryKeyName: organization_alias_pkey
+            name: alias
+            type: TEXT
+        tableName: organization_alias
+- changeSet:
+    id: 1582148453365-19
+    author: jim (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            constraints:
+              primaryKey: true
+              primaryKeyName: organization_user_pkey
+            name: organizationid
+            type: BIGINT
+        - column:
+            constraints:
+              primaryKey: true
+              primaryKeyName: organization_user_pkey
+            name: userid
+            type: BIGINT
+        - column:
+            constraints:
+              nullable: false
+            name: accepted
+            type: BOOLEAN
+        - column:
+            name: dbcreatedate
+            type: TIMESTAMP WITHOUT TIME ZONE
+        - column:
+            name: dbupdatedate
+            type: TIMESTAMP WITHOUT TIME ZONE
+        - column:
+            name: role
+            type: VARCHAR(255)
+        tableName: organization_user
+- changeSet:
+    id: 1582148453365-20
+    author: jim (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            constraints:
+              primaryKey: true
+              primaryKeyName: service_pkey
+            name: id
+            type: BIGINT
+        - column:
+            name: author
+            type: VARCHAR(255)
+        - column:
+            name: conceptdoi
+            type: VARCHAR(255)
+        - column:
+            constraints:
+              nullable: false
+            name: dbcreatedate
+            type: TIMESTAMP WITHOUT TIME ZONE
+        - column:
+            constraints:
+              nullable: false
+            name: dbupdatedate
+            type: TIMESTAMP WITHOUT TIME ZONE
+        - column:
+            name: defaultversion
+            type: VARCHAR(255)
+        - column:
+            name: description
+            type: TEXT
+        - column:
+            name: email
+            type: VARCHAR(255)
+        - column:
+            name: giturl
+            type: VARCHAR(255)
+        - column:
+            name: ispublished
+            type: BOOLEAN
+        - column:
+            name: lastmodified
+            type: TIMESTAMP WITHOUT TIME ZONE
+        - column:
+            name: lastupdated
+            type: TIMESTAMP WITHOUT TIME ZONE
+        - column:
+            name: topicid
+            type: BIGINT
+        - column:
+            name: checkerid
+            type: BIGINT
+        - column:
+            constraints:
+              nullable: false
+            name: descriptortype
+            type: VARCHAR(255)
+        - column:
+            constraints:
+              nullable: false
+            defaultValue: STUB
+            name: mode
+            type: TEXT
+        - column:
+            constraints:
+              nullable: false
+            name: organization
+            type: VARCHAR(255)
+        - column:
+            constraints:
+              nullable: false
+            name: repository
+            type: VARCHAR(255)
+        - column:
+            constraints:
+              nullable: false
+            name: sourcecontrol
+            type: TEXT
+        - column:
+            name: workflowname
+            type: TEXT
+        tableName: service
+- changeSet:
+    id: 1582148453365-21
+    author: jim (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            autoIncrement: true
+            constraints:
+              primaryKey: true
+              primaryKeyName: sourcefile_pkey
+            name: id
+            type: BIGSERIAL
+        - column:
+            constraints:
+              nullable: false
+            name: absolutepath
+            type: VARCHAR(255)
+        - column:
+            name: content
+            type: TEXT
+        - column:
+            name: dbcreatedate
+            type: TIMESTAMP WITHOUT TIME ZONE
+        - column:
+            name: dbupdatedate
+            type: TIMESTAMP WITHOUT TIME ZONE
+        - column:
+            defaultValueBoolean: false
+            name: frozen
+            type: BOOLEAN
+        - column:
+            constraints:
+              nullable: false
+            name: path
+            type: VARCHAR(255)
+        - column:
+            name: type
+            type: VARCHAR(255)
+        tableName: sourcefile
+- changeSet:
+    id: 1582148453365-22
+    author: jim (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            constraints:
+              primaryKey: true
+              primaryKeyName: sourcefile_verified_pkey
+            name: id
+            type: BIGINT
+        - column:
+            name: dbcreatedate
+            type: TIMESTAMP WITHOUT TIME ZONE
+        - column:
+            name: dbupdatedate
+            type: TIMESTAMP WITHOUT TIME ZONE
+        - column:
+            name: metadata
+            type: TEXT
+        - column:
+            name: platformversion
+            type: TEXT
+        - column:
+            constraints:
+              nullable: false
+            name: verified
+            type: BOOLEAN
+        - column:
+            constraints:
+              primaryKey: true
+              primaryKeyName: sourcefile_verified_pkey
+            name: source
+            type: TEXT
+        tableName: sourcefile_verified
+- changeSet:
+    id: 1582148453365-23
+    author: jim (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            constraints:
+              primaryKey: true
+              primaryKeyName: starred_pkey
+            name: userid
+            type: BIGINT
+        - column:
+            constraints:
+              primaryKey: true
+              primaryKeyName: starred_pkey
+            name: entryid
+            type: BIGINT
+        tableName: starred
+- changeSet:
+    id: 1582148453365-24
+    author: jim (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            constraints:
+              primaryKey: true
+              primaryKeyName: starred_organizations_pkey
+            name: organizationid
+            type: BIGINT
+        - column:
+            constraints:
+              primaryKey: true
+              primaryKeyName: starred_organizations_pkey
+            name: userid
+            type: BIGINT
+        tableName: starred_organizations
+- changeSet:
+    id: 1582148453365-25
+    author: jim (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            constraints:
+              primaryKey: true
+              primaryKeyName: tag_pkey
+            name: id
+            type: BIGINT
+        - column:
+            name: commitid
+            type: TEXT
+        - column:
+            constraints:
+              nullable: false
+            name: dbcreatedate
+            type: TIMESTAMP WITHOUT TIME ZONE
+        - column:
+            constraints:
+              nullable: false
+            name: dbupdatedate
+            type: TIMESTAMP WITHOUT TIME ZONE
+        - column:
+            defaultValueBoolean: false
+            name: dirtybit
+            type: BOOLEAN
+        - column:
+            defaultValueBoolean: false
+            name: frozen
+            type: BOOLEAN
+        - column:
+            name: name
+            type: VARCHAR(255)
+        - column:
+            name: reference
+            type: VARCHAR(255)
+        - column:
+            constraints:
+              nullable: false
+            defaultValue: UNSET
+            name: referencetype
+            type: TEXT
+        - column:
+            name: valid
+            type: BOOLEAN
+        - column:
+            name: versioneditor_id
+            type: BIGINT
+        - column:
+            name: automated
+            type: BOOLEAN
+        - column:
+            constraints:
+              nullable: false
+            name: cwlpath
+            type: TEXT
+        - column:
+            constraints:
+              nullable: false
+            name: dockerfilepath
+            type: TEXT
+        - column:
+            name: imageid
+            type: VARCHAR(255)
+        - column:
+            name: lastbuilt
+            type: TIMESTAMP WITHOUT TIME ZONE
+        - column:
+            name: size
+            type: BIGINT
+        - column:
+            constraints:
+              nullable: false
+            defaultValue: /Dockstore.wdl
+            name: wdlpath
+            type: TEXT
+        tableName: tag
+- changeSet:
+    id: 1582148453365-26
+    author: jim (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            autoIncrement: true
+            constraints:
+              primaryKey: true
+              primaryKeyName: token_pkey
+            name: id
+            type: BIGSERIAL
+        - column:
+            constraints:
+              nullable: false
+            name: content
+            type: TEXT
+        - column:
+            name: dbcreatedate
+            type: TIMESTAMP WITHOUT TIME ZONE
+        - column:
+            name: dbupdatedate
+            type: TIMESTAMP WITHOUT TIME ZONE
+        - column:
+            name: refreshtoken
+            type: TEXT
+        - column:
+            name: tokenexpiry
+            type: TIMESTAMP WITHOUT TIME ZONE
+        - column:
+            constraints:
+              nullable: false
+            name: tokensource
+            type: VARCHAR(255)
+        - column:
+            name: userid
+            type: BIGINT
+        - column:
+            constraints:
+              nullable: false
+            name: username
+            type: VARCHAR(255)
+        tableName: token
+- changeSet:
+    id: 1582148453365-27
+    author: jim (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            constraints:
+              primaryKey: true
+              primaryKeyName: tool_pkey
+            name: id
+            type: BIGINT
+        - column:
+            name: author
+            type: VARCHAR(255)
+        - column:
+            name: conceptdoi
+            type: VARCHAR(255)
+        - column:
+            constraints:
+              nullable: false
+            name: dbcreatedate
+            type: TIMESTAMP WITHOUT TIME ZONE
+        - column:
+            constraints:
+              nullable: false
+            name: dbupdatedate
+            type: TIMESTAMP WITHOUT TIME ZONE
+        - column:
+            name: defaultversion
+            type: VARCHAR(255)
+        - column:
+            name: description
+            type: TEXT
+        - column:
+            name: email
+            type: VARCHAR(255)
+        - column:
+            name: giturl
+            type: VARCHAR(255)
+        - column:
+            name: ispublished
+            type: BOOLEAN
+        - column:
+            name: lastmodified
+            type: TIMESTAMP WITHOUT TIME ZONE
+        - column:
+            name: lastupdated
+            type: TIMESTAMP WITHOUT TIME ZONE
+        - column:
+            name: topicid
+            type: BIGINT
+        - column:
+            name: checkerid
+            type: BIGINT
+        - column:
+            name: lastbuild
+            type: TIMESTAMP WITHOUT TIME ZONE
+        - column:
+            constraints:
+              nullable: false
+            defaultValue: AUTO_DETECT_QUAY_TAGS_AUTOMATED_BUILDS
+            name: mode
+            type: TEXT
+        - column:
+            constraints:
+              nullable: false
+            name: name
+            type: VARCHAR(255)
+        - column:
+            name: namespace
+            type: VARCHAR(255)
+        - column:
+            defaultValueBoolean: false
+            name: privateaccess
+            type: BOOLEAN
+        - column:
+            constraints:
+              nullable: false
+            name: registry
+            type: VARCHAR(255)
+        - column:
+            name: toolmaintaineremail
+            type: VARCHAR(255)
+        - column:
+            name: toolname
+            type: TEXT
+        tableName: tool
+- changeSet:
+    id: 1582148453365-28
+    author: jim (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            constraints:
+              primaryKey: true
+              primaryKeyName: tool_tag_pkey
+            name: toolid
+            type: BIGINT
+        - column:
+            constraints:
+              primaryKey: true
+              primaryKeyName: tool_tag_pkey
+            name: tagid
+            type: BIGINT
+        tableName: tool_tag
+- changeSet:
+    id: 1582148453365-29
+    author: jim (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            constraints:
+              primaryKey: true
+              primaryKeyName: user_entry_pkey
+            name: userid
+            type: BIGINT
+        - column:
+            constraints:
+              primaryKey: true
+              primaryKeyName: user_entry_pkey
+            name: entryid
+            type: BIGINT
+        tableName: user_entry
+- changeSet:
+    id: 1582148453365-30
+    author: jim (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            constraints:
+              primaryKey: true
+              primaryKeyName: user_profile_pkey
+            name: id
+            type: BIGINT
+        - column:
+            name: avatarurl
+            type: TEXT
+        - column:
+            name: bio
+            type: TEXT
+        - column:
+            name: company
+            type: TEXT
+        - column:
+            name: dbcreatedate
+            type: TIMESTAMP WITHOUT TIME ZONE
+        - column:
+            name: dbupdatedate
+            type: TIMESTAMP WITHOUT TIME ZONE
+        - column:
+            name: email
+            type: TEXT
+        - column:
+            name: location
+            type: TEXT
+        - column:
+            name: name
+            type: TEXT
+        - column:
+            name: username
+            type: TEXT
+        - column:
+            constraints:
+              primaryKey: true
+              primaryKeyName: user_profile_pkey
+            name: token_type
+            type: TEXT
+        tableName: user_profile
+- changeSet:
+    id: 1582148453365-31
+    author: jim (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            autoIncrement: true
+            constraints:
+              primaryKey: true
+              primaryKeyName: validation_pkey
+            name: id
+            type: BIGSERIAL
+        - column:
+            name: dbcreatedate
+            type: TIMESTAMP WITHOUT TIME ZONE
+        - column:
+            name: dbupdatedate
+            type: TIMESTAMP WITHOUT TIME ZONE
+        - column:
+            name: message
+            type: TEXT
+        - column:
+            name: type
+            type: TEXT
+        - column:
+            name: valid
+            type: BOOLEAN
+        tableName: validation
+- changeSet:
+    id: 1582148453365-32
+    author: jim (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            constraints:
+              primaryKey: true
+              primaryKeyName: version_input_fileformat_pkey
+            name: versionid
+            type: BIGINT
+        - column:
+            constraints:
+              primaryKey: true
+              primaryKeyName: version_input_fileformat_pkey
+            name: fileformatid
+            type: BIGINT
+        tableName: version_input_fileformat
+- changeSet:
+    id: 1582148453365-33
+    author: jim (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            constraints:
+              primaryKey: true
+              primaryKeyName: version_metadata_pkey
+            name: id
+            type: BIGINT
+        - column:
+            name: author
+            type: VARCHAR(255)
+        - column:
+            name: description
+            type: TEXT
+        - column:
+            name: description_source
+            type: VARCHAR(255)
+        - column:
+            constraints:
+              nullable: false
+            defaultValue: NOT_REQUESTED
+            name: doistatus
+            type: TEXT
+        - column:
+            name: doiurl
+            type: VARCHAR(255)
+        - column:
+            name: email
+            type: VARCHAR(255)
+        - column:
+            name: hidden
+            type: BOOLEAN
+        - column:
+            defaultValueBoolean: false
+            name: verified
+            type: BOOLEAN
+        - column:
+            name: verifiedsource
+            type: VARCHAR(255)
+        tableName: version_metadata
+- changeSet:
+    id: 1582148453365-34
+    author: jim (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            constraints:
+              primaryKey: true
+              primaryKeyName: version_output_fileformat_pkey
+            name: versionid
+            type: BIGINT
+        - column:
+            constraints:
+              primaryKey: true
+              primaryKeyName: version_output_fileformat_pkey
+            name: fileformatid
+            type: BIGINT
+        tableName: version_output_fileformat
+- changeSet:
+    id: 1582148453365-35
+    author: jim (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            constraints:
+              primaryKey: true
+              primaryKeyName: version_sourcefile_pkey
+            name: versionid
+            type: BIGINT
+        - column:
+            constraints:
+              primaryKey: true
+              primaryKeyName: version_sourcefile_pkey
+            name: sourcefileid
+            type: BIGINT
+        tableName: version_sourcefile
+- changeSet:
+    id: 1582148453365-36
+    author: jim (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            constraints:
+              primaryKey: true
+              primaryKeyName: version_validation_pkey
+            name: versionid
+            type: BIGINT
+        - column:
+            constraints:
+              primaryKey: true
+              primaryKeyName: version_validation_pkey
+            name: validationid
+            type: BIGINT
+        tableName: version_validation
+- changeSet:
+    id: 1582148453365-37
+    author: jim (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            constraints:
+              primaryKey: true
+              primaryKeyName: workflow_pkey
+            name: id
+            type: BIGINT
+        - column:
+            name: author
+            type: VARCHAR(255)
+        - column:
+            name: conceptdoi
+            type: VARCHAR(255)
+        - column:
+            constraints:
+              nullable: false
+            name: dbcreatedate
+            type: TIMESTAMP WITHOUT TIME ZONE
+        - column:
+            constraints:
+              nullable: false
+            name: dbupdatedate
+            type: TIMESTAMP WITHOUT TIME ZONE
+        - column:
+            name: defaultversion
+            type: VARCHAR(255)
+        - column:
+            name: description
+            type: TEXT
+        - column:
+            name: email
+            type: VARCHAR(255)
+        - column:
+            name: giturl
+            type: VARCHAR(255)
+        - column:
+            name: ispublished
+            type: BOOLEAN
+        - column:
+            name: lastmodified
+            type: TIMESTAMP WITHOUT TIME ZONE
+        - column:
+            name: lastupdated
+            type: TIMESTAMP WITHOUT TIME ZONE
+        - column:
+            name: topicid
+            type: BIGINT
+        - column:
+            name: checkerid
+            type: BIGINT
+        - column:
+            constraints:
+              nullable: false
+            name: descriptortype
+            type: VARCHAR(255)
+        - column:
+            constraints:
+              nullable: false
+            defaultValue: STUB
+            name: mode
+            type: TEXT
+        - column:
+            constraints:
+              nullable: false
+            name: organization
+            type: VARCHAR(255)
+        - column:
+            constraints:
+              nullable: false
+            name: repository
+            type: VARCHAR(255)
+        - column:
+            constraints:
+              nullable: false
+            name: sourcecontrol
+            type: TEXT
+        - column:
+            name: workflowname
+            type: TEXT
+        - column:
+            defaultValueBoolean: false
+            name: ischecker
+            type: BOOLEAN
+        tableName: workflow
+- changeSet:
+    id: 1582148453365-38
+    author: jim (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            constraints:
+              primaryKey: true
+              primaryKeyName: workflow_workflowversion_pkey
+            name: workflowid
+            type: BIGINT
+        - column:
+            constraints:
+              primaryKey: true
+              primaryKeyName: workflow_workflowversion_pkey
+            name: workflowversionid
+            type: BIGINT
+        tableName: workflow_workflowversion
+- changeSet:
+    id: 1582148453365-39
+    author: jim (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            constraints:
+              primaryKey: true
+              primaryKeyName: workflowversion_pkey
+            name: id
+            type: BIGINT
+        - column:
+            name: commitid
+            type: TEXT
+        - column:
+            constraints:
+              nullable: false
+            name: dbcreatedate
+            type: TIMESTAMP WITHOUT TIME ZONE
+        - column:
+            constraints:
+              nullable: false
+            name: dbupdatedate
+            type: TIMESTAMP WITHOUT TIME ZONE
+        - column:
+            defaultValueBoolean: false
+            name: dirtybit
+            type: BOOLEAN
+        - column:
+            defaultValueBoolean: false
+            name: frozen
+            type: BOOLEAN
+        - column:
+            name: name
+            type: VARCHAR(255)
+        - column:
+            name: reference
+            type: VARCHAR(255)
+        - column:
+            constraints:
+              nullable: false
+            defaultValue: UNSET
+            name: referencetype
+            type: TEXT
+        - column:
+            name: valid
+            type: BOOLEAN
+        - column:
+            name: versioneditor_id
+            type: BIGINT
+        - column:
+            name: lastmodified
+            type: TIMESTAMP WITHOUT TIME ZONE
+        - column:
+            name: subclass
+            type: INTEGER
+        - column:
+            constraints:
+              nullable: false
+            name: workflowpath
+            type: TEXT
+        tableName: workflowversion
+- changeSet:
+    id: 1582148453365-40
+    author: jim (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            constraints:
+              primaryKey: true
+              primaryKeyName: workflowversion_alias_pkey
+            name: id
+            type: BIGINT
+        - column:
+            name: content
+            type: TEXT
+        - column:
+            name: dbcreatedate
+            type: TIMESTAMP WITHOUT TIME ZONE
+        - column:
+            name: dbupdatedate
+            type: TIMESTAMP WITHOUT TIME ZONE
+        - column:
+            constraints:
+              primaryKey: true
+              primaryKeyName: workflowversion_alias_pkey
+            name: alias
+            type: TEXT
+        tableName: workflowversion_alias
+- changeSet:
+    id: 1582148453365-41
+    author: jim (generated)
+    changes:
+    - addUniqueConstraint:
+        columnNames: username, tokensource
+        constraintName: one_token_link_per_identify
+        tableName: token
+- changeSet:
+    id: 1582148453365-42
+    author: jim (generated)
+    changes:
+    - addUniqueConstraint:
+        columnNames: displayname
+        constraintName: uk_1rm865rnlyxh3908005923fjo
+        tableName: organization
+- changeSet:
+    id: 1582148453365-43
+    author: jim (generated)
+    changes:
+    - addUniqueConstraint:
+        columnNames: validationid
+        constraintName: uk_6hgn6u5wy4fbmlm2sul3kf3ed
+        tableName: version_validation
+- changeSet:
+    id: 1582148453365-44
+    author: jim (generated)
+    changes:
+    - addUniqueConstraint:
+        columnNames: username
+        constraintName: uk_9vcoeu4nuu2ql7fh05mn20ydd
+        tableName: enduser
+- changeSet:
+    id: 1582148453365-45
+    author: jim (generated)
+    changes:
+    - addUniqueConstraint:
+        columnNames: value
+        constraintName: uk_9xhsn1bsea2csoy3l0gtq41vv
+        tableName: label
+- changeSet:
+    id: 1582148453365-46
+    author: jim (generated)
+    changes:
+    - addUniqueConstraint:
+        columnNames: sourcefileid
+        constraintName: uk_e2j71kjdot9b8l5qmjw2ve38o
+        tableName: version_sourcefile
+- changeSet:
+    id: 1582148453365-47
+    author: jim (generated)
+    changes:
+    - addUniqueConstraint:
+        columnNames: workflowversionid
+        constraintName: uk_encl8hnebnkcaxj9tlugr9cxh
+        tableName: workflow_workflowversion
+- changeSet:
+    id: 1582148453365-48
+    author: jim (generated)
+    changes:
+    - addUniqueConstraint:
+        columnNames: imageid
+        constraintName: uk_f4es6vge9tpr3v836n62konau
+        tableName: entry_version_image
+- changeSet:
+    id: 1582148453365-49
+    author: jim (generated)
+    changes:
+    - addUniqueConstraint:
+        columnNames: tagid
+        constraintName: uk_jdgfioq44aqox39xrs1wceow1
+        tableName: tool_tag
+- changeSet:
+    id: 1582148453365-50
+    author: jim (generated)
+    changes:
+    - addUniqueConstraint:
+        columnNames: displayname
+        constraintName: uk_ni3nuevy9ou7g266o3uhygwxg
+        tableName: collection
+- changeSet:
+    id: 1582148453365-51
+    author: jim (generated)
+    changes:
+    - addUniqueConstraint:
+        columnNames: value
+        constraintName: uk_u3l5fv4hlf3y5wsimlpsf0u2
+        tableName: fileformat
+- changeSet:
+    id: 1582148453365-52
+    author: jim (generated)
+    changes:
+    - addUniqueConstraint:
+        columnNames: registry, namespace, name, toolname
+        constraintName: ukbq5vy17y4ocaist3d3r3imcus
+        tableName: tool
+- changeSet:
+    id: 1582148453365-53
+    author: jim (generated)
+    changes:
+    - addUniqueConstraint:
+        columnNames: username, token_type
+        constraintName: ukq18le7ca82bsdwmu9nrb1pxe8
+        tableName: user_profile
+- changeSet:
+    id: 1582148453365-54
+    author: jim (generated)
+    changes:
+    - addUniqueConstraint:
+        columnNames: alias
+        constraintName: unique_col_aliases
+        tableName: collection_alias
+- changeSet:
+    id: 1582148453365-55
+    author: jim (generated)
+    changes:
+    - addUniqueConstraint:
+        columnNames: alias
+        constraintName: unique_entry_aliases
+        tableName: entry_alias
+- changeSet:
+    id: 1582148453365-56
+    author: jim (generated)
+    changes:
+    - addUniqueConstraint:
+        columnNames: alias
+        constraintName: unique_org_aliases
+        tableName: organization_alias
+- changeSet:
+    id: 1582148453365-57
+    author: jim (generated)
+    changes:
+    - addUniqueConstraint:
+        columnNames: entry_id, filetype, path
+        constraintName: unique_paths
+        tableName: entry_defaultpaths
+- changeSet:
+    id: 1582148453365-58
+    author: jim (generated)
+    changes:
+    - addUniqueConstraint:
+        columnNames: alias
+        constraintName: unique_workflowversion_aliases
+        tableName: workflowversion_alias
+- changeSet:
+    id: 1582148453365-59
+    author: jim (generated)
+    changes:
+    - createIndex:
+        columns:
+        - column:
+            name: email
+        indexName: profile_by_email
+        tableName: user_profile
+- changeSet:
+    id: 1582148453365-60
+    author: jim (generated)
+    changes:
+    - createIndex:
+        columns:
+        - column:
+            name: username
+        indexName: profile_by_username
+        tableName: user_profile
+- changeSet:
+    id: 1582148453365-61
+    author: jim (generated)
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: organizationid
+        baseTableName: event
+        constraintName: fk2gwrngqflbotom5nymhwa4t4i
+        deferrable: false
+        initiallyDeferred: false
+        onDelete: NO ACTION
+        onUpdate: NO ACTION
+        referencedColumnNames: id
+        referencedTableName: organization
+        validate: true
+- changeSet:
+    id: 1582148453365-62
+    author: jim (generated)
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: workflowid
+        baseTableName: event
+        constraintName: fk2lwe1ll54dfj1qb6piel2bue0
+        deferrable: false
+        initiallyDeferred: false
+        onDelete: NO ACTION
+        onUpdate: NO ACTION
+        referencedColumnNames: id
+        referencedTableName: workflow
+        validate: true
+- changeSet:
+    id: 1582148453365-63
+    author: jim (generated)
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: id
+        baseTableName: collection_alias
+        constraintName: fk5tx58q6b5h57wei101ue758mg
+        deferrable: false
+        initiallyDeferred: false
+        onDelete: NO ACTION
+        onUpdate: NO ACTION
+        referencedColumnNames: id
+        referencedTableName: collection
+        validate: true
+- changeSet:
+    id: 1582148453365-64
+    author: jim (generated)
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: workflowversionid
+        baseTableName: workflow_workflowversion
+        constraintName: fk5vtuf5nrhbqvcqaxrynl3pymt
+        deferrable: false
+        initiallyDeferred: false
+        onDelete: NO ACTION
+        onUpdate: NO ACTION
+        referencedColumnNames: id
+        referencedTableName: workflowversion
+        validate: true
+- changeSet:
+    id: 1582148453365-65
+    author: jim (generated)
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: id
+        baseTableName: organization_alias
+        constraintName: fk9vc5mhr98myw24e5rbdovc75l
+        deferrable: false
+        initiallyDeferred: false
+        onDelete: NO ACTION
+        onUpdate: NO ACTION
+        referencedColumnNames: id
+        referencedTableName: organization
+        validate: true
+- changeSet:
+    id: 1582148453365-66
+    author: jim (generated)
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: versioneditor_id
+        baseTableName: workflowversion
+        constraintName: fk_fouru2bfm9cexiy42oi38rjlo
+        deferrable: false
+        initiallyDeferred: false
+        onDelete: NO ACTION
+        onUpdate: NO ACTION
+        referencedColumnNames: id
+        referencedTableName: enduser
+        validate: true
+- changeSet:
+    id: 1582148453365-67
+    author: jim (generated)
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: versioneditor_id
+        baseTableName: tag
+        constraintName: fk_g1b7hfuaylp0o64gg1rplri0e
+        deferrable: false
+        initiallyDeferred: false
+        onDelete: NO ACTION
+        onUpdate: NO ACTION
+        referencedColumnNames: id
+        referencedTableName: enduser
+        validate: true
+- changeSet:
+    id: 1582148453365-68
+    author: jim (generated)
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: checkerid
+        baseTableName: workflow
+        constraintName: fk_iarqx1j8xw93llbig25d69vkd
+        deferrable: false
+        initiallyDeferred: false
+        onDelete: NO ACTION
+        onUpdate: NO ACTION
+        referencedColumnNames: id
+        referencedTableName: workflow
+        validate: true
+- changeSet:
+    id: 1582148453365-69
+    author: jim (generated)
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: checkerid
+        baseTableName: service
+        constraintName: fk_pri73skmrftqj712gbe0ce1hi
+        deferrable: false
+        initiallyDeferred: false
+        onDelete: NO ACTION
+        onUpdate: NO ACTION
+        referencedColumnNames: id
+        referencedTableName: workflow
+        validate: true
+- changeSet:
+    id: 1582148453365-70
+    author: jim (generated)
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: checkerid
+        baseTableName: tool
+        constraintName: fk_snqxrslktsjxj7g8pgx6r42jk
+        deferrable: false
+        initiallyDeferred: false
+        onDelete: NO ACTION
+        onUpdate: NO ACTION
+        referencedColumnNames: id
+        referencedTableName: workflow
+        validate: true
+- changeSet:
+    id: 1582148453365-71
+    author: jim (generated)
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: initiatoruserid
+        baseTableName: event
+        constraintName: fkay97q0nmuj1bturjmsf8mb1oh
+        deferrable: false
+        initiallyDeferred: false
+        onDelete: NO ACTION
+        onUpdate: NO ACTION
+        referencedColumnNames: id
+        referencedTableName: enduser
+        validate: true
+- changeSet:
+    id: 1582148453365-72
+    author: jim (generated)
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: organizationid
+        baseTableName: collection
+        constraintName: fkcypb3209rojwv1glhfcuw1pql
+        deferrable: false
+        initiallyDeferred: false
+        onDelete: NO ACTION
+        onUpdate: NO ACTION
+        referencedColumnNames: id
+        referencedTableName: organization
+        validate: true
+- changeSet:
+    id: 1582148453365-73
+    author: jim (generated)
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: userid
+        baseTableName: starred
+        constraintName: fkdcfqiy0arvxmmh5e68ix75gwo
+        deferrable: false
+        initiallyDeferred: false
+        onDelete: NO ACTION
+        onUpdate: NO ACTION
+        referencedColumnNames: id
+        referencedTableName: enduser
+        validate: true
+- changeSet:
+    id: 1582148453365-74
+    author: jim (generated)
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: toolid
+        baseTableName: event
+        constraintName: fkeeum1j50qyqn89nkiv2kc23f5
+        deferrable: false
+        initiallyDeferred: false
+        onDelete: NO ACTION
+        onUpdate: NO ACTION
+        referencedColumnNames: id
+        referencedTableName: tool
+        validate: true
+- changeSet:
+    id: 1582148453365-75
+    author: jim (generated)
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: imageid
+        baseTableName: entry_version_image
+        constraintName: fkfiy442cs8k24x8f3wnyxakh3w
+        deferrable: false
+        initiallyDeferred: false
+        onDelete: NO ACTION
+        onUpdate: NO ACTION
+        referencedColumnNames: id
+        referencedTableName: image
+        validate: true
+- changeSet:
+    id: 1582148453365-76
+    author: jim (generated)
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: validationid
+        baseTableName: version_validation
+        constraintName: fkg7ciu1xww7fds81lc60dvsgfu
+        deferrable: false
+        initiallyDeferred: false
+        onDelete: NO ACTION
+        onUpdate: NO ACTION
+        referencedColumnNames: id
+        referencedTableName: validation
+        validate: true
+- changeSet:
+    id: 1582148453365-77
+    author: jim (generated)
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: collectionid
+        baseTableName: collection_entry
+        constraintName: fkgeb6luwjr17p0q7w7qr01jheb
+        deferrable: false
+        initiallyDeferred: false
+        onDelete: NO ACTION
+        onUpdate: NO ACTION
+        referencedColumnNames: id
+        referencedTableName: collection
+        validate: true
+- changeSet:
+    id: 1582148453365-78
+    author: jim (generated)
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: userid
+        baseTableName: user_entry
+        constraintName: fkhdtovkjeuj2u4adc073nh02w
+        deferrable: false
+        initiallyDeferred: false
+        onDelete: NO ACTION
+        onUpdate: NO ACTION
+        referencedColumnNames: id
+        referencedTableName: enduser
+        validate: true
+- changeSet:
+    id: 1582148453365-79
+    author: jim (generated)
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: tagid
+        baseTableName: tool_tag
+        constraintName: fkjkn6qubuvn25bun52eqjleyl6
+        deferrable: false
+        initiallyDeferred: false
+        onDelete: NO ACTION
+        onUpdate: NO ACTION
+        referencedColumnNames: id
+        referencedTableName: tag
+        validate: true
+- changeSet:
+    id: 1582148453365-80
+    author: jim (generated)
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: toolid
+        baseTableName: tool_tag
+        constraintName: fkjtsjg6jdnwxoeicd27ujmeeaj
+        deferrable: false
+        initiallyDeferred: false
+        onDelete: NO ACTION
+        onUpdate: NO ACTION
+        referencedColumnNames: id
+        referencedTableName: tool
+        validate: true
+- changeSet:
+    id: 1582148453365-81
+    author: jim (generated)
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: id
+        baseTableName: workflowversion_alias
+        constraintName: fkkgh99aqty2cj7ptbh0ae9uh6k
+        deferrable: false
+        initiallyDeferred: false
+        onDelete: NO ACTION
+        onUpdate: NO ACTION
+        referencedColumnNames: id
+        referencedTableName: workflowversion
+        validate: true
+- changeSet:
+    id: 1582148453365-82
+    author: jim (generated)
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: userid
+        baseTableName: event
+        constraintName: fkletaxmm4shuge6b6y4nw5qp7x
+        deferrable: false
+        initiallyDeferred: false
+        onDelete: NO ACTION
+        onUpdate: NO ACTION
+        referencedColumnNames: id
+        referencedTableName: enduser
+        validate: true
+- changeSet:
+    id: 1582148453365-83
+    author: jim (generated)
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: userid
+        baseTableName: organization_user
+        constraintName: fkmba6y8xu7ivug1foiq1l8tr0w
+        deferrable: false
+        initiallyDeferred: false
+        onDelete: NO ACTION
+        onUpdate: NO ACTION
+        referencedColumnNames: id
+        referencedTableName: enduser
+        validate: true
+- changeSet:
+    id: 1582148453365-84
+    author: jim (generated)
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: sourcefileid
+        baseTableName: version_sourcefile
+        constraintName: fkmby5o476bdwrx07ax2keoyttn
+        deferrable: false
+        initiallyDeferred: false
+        onDelete: NO ACTION
+        onUpdate: NO ACTION
+        referencedColumnNames: id
+        referencedTableName: sourcefile
+        validate: true
+- changeSet:
+    id: 1582148453365-85
+    author: jim (generated)
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: id
+        baseTableName: sourcefile_verified
+        constraintName: fkmj6vxqbgfsdgfe8bjksnyix6f
+        deferrable: false
+        initiallyDeferred: false
+        onDelete: NO ACTION
+        onUpdate: NO ACTION
+        referencedColumnNames: id
+        referencedTableName: sourcefile
+        validate: true
+- changeSet:
+    id: 1582148453365-86
+    author: jim (generated)
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: fileformatid
+        baseTableName: version_output_fileformat
+        constraintName: fkmtdn8nvhv8kd76g68rc4svhs5
+        deferrable: false
+        initiallyDeferred: false
+        onDelete: NO ACTION
+        onUpdate: NO ACTION
+        referencedColumnNames: id
+        referencedTableName: fileformat
+        validate: true
+- changeSet:
+    id: 1582148453365-87
+    author: jim (generated)
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: collectionid
+        baseTableName: event
+        constraintName: fkom220e5fvyd8npyen20t581l6
+        deferrable: false
+        initiallyDeferred: false
+        onDelete: NO ACTION
+        onUpdate: NO ACTION
+        referencedColumnNames: id
+        referencedTableName: collection
+        validate: true
+- changeSet:
+    id: 1582148453365-88
+    author: jim (generated)
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: organizationid
+        baseTableName: organization_user
+        constraintName: fkpg93lgb7bv1jebmgimwn0j16o
+        deferrable: false
+        initiallyDeferred: false
+        onDelete: NO ACTION
+        onUpdate: NO ACTION
+        referencedColumnNames: id
+        referencedTableName: organization
+        validate: true
+- changeSet:
+    id: 1582148453365-89
+    author: jim (generated)
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: userid
+        baseTableName: starred_organizations
+        constraintName: fkpnreuftx6ayh6h443mgb6q5w3
+        deferrable: false
+        initiallyDeferred: false
+        onDelete: NO ACTION
+        onUpdate: NO ACTION
+        referencedColumnNames: id
+        referencedTableName: enduser
+        validate: true
+- changeSet:
+    id: 1582148453365-90
+    author: jim (generated)
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: fileformatid
+        baseTableName: version_input_fileformat
+        constraintName: fkpxhuqcsws1um1ojmxcd0daxr1
+        deferrable: false
+        initiallyDeferred: false
+        onDelete: NO ACTION
+        onUpdate: NO ACTION
+        referencedColumnNames: id
+        referencedTableName: fileformat
+        validate: true
+- changeSet:
+    id: 1582148453365-91
+    author: jim (generated)
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: organizationid
+        baseTableName: starred_organizations
+        constraintName: fkrqeqhmwy6e15slp4mo1v8f4pn
+        deferrable: false
+        initiallyDeferred: false
+        onDelete: NO ACTION
+        onUpdate: NO ACTION
+        referencedColumnNames: id
+        referencedTableName: organization
+        validate: true
+- changeSet:
+    id: 1582148453365-92
+    author: jim (generated)
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: labelid
+        baseTableName: entry_label
+        constraintName: fks71c9mk0f98015eqgtyvs0ewp
+        deferrable: false
+        initiallyDeferred: false
+        onDelete: NO ACTION
+        onUpdate: NO ACTION
+        referencedColumnNames: id
+        referencedTableName: label
+        validate: true
+- changeSet:
+    id: 1582148453365-93
+    author: jim (generated)
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: id
+        baseTableName: user_profile
+        constraintName: fksh3usgj8dg6onw0x0xr84chff
+        deferrable: false
+        initiallyDeferred: false
+        onDelete: NO ACTION
+        onUpdate: NO ACTION
+        referencedColumnNames: id
+        referencedTableName: enduser
+        validate: true
+

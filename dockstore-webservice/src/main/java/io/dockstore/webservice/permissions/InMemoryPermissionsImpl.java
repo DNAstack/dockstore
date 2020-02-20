@@ -217,7 +217,7 @@ public class InMemoryPermissionsImpl implements PermissionsInterface {
     }
 
     private String userKey(User user) {
-        User.Profile profile = user.getUserProfiles().get(TokenType.GOOGLE_COM.toString());
+        User.Profile profile = user.getUserProfiles().get(TokenType.OIDC.toString());
         if (profile == null || profile.email == null) {
             return user.getUsername();
         } else {

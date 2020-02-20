@@ -159,9 +159,10 @@
         <module>swagger-java-quay-client</module>
         <module>swagger-java-bitbucket-client</module>
         <module>swagger-java-sam-client</module>
-        <module>dockstore-integration-testing</module>
-        <module>dockstore-event-consumer</module>
-        <module>reports</module>
+
+<!--        <module>dockstore-integration-testing</module>-->
+<!--        <module>dockstore-event-consumer</module>-->
+<!--        <module>reports</module>-->
         <module>swagger-java-discourse-client</module>
         <module>swagger-java-zenodo-client</module>
     </modules>
@@ -827,6 +828,7 @@
         </dependencies>
     </dependencyManagement>
 
+
     <build>
         <pluginManagement>
             <plugins>
@@ -1252,10 +1254,97 @@
                     </execution>
                 </executions>
             </plugin>
+
         </plugins>
     </build>
 
     <profiles>
+        <profile>
+            <id>resolve-dependencies</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>de.qaware.maven</groupId>
+                        <artifactId>go-offline-maven-plugin</artifactId>
+                        <version>1.1.0</version>
+                        <configuration>
+                            <downloadSources>false</downloadSources>
+                            <downloadJavadoc>false</downloadJavadoc>
+                            <dynamicDependencies>
+                                <DynamicDependency>
+                                    <groupId>org.apache.maven.surefire</groupId>
+                                    <artifactId>surefire-junit4</artifactId>
+                                    <version>2.22.1</version>
+                                    <repositoryType>PLUGIN</repositoryType>
+                                </DynamicDependency>
+                                <DynamicDependency>
+                                    <groupId>org.apache.maven</groupId>
+                                    <artifactId>maven-plugin-api</artifactId>
+                                    <version>2.0.6</version>
+                                    <repositoryType>PLUGIN</repositoryType>
+                                </DynamicDependency>
+                                <DynamicDependency>
+                                    <groupId>org.apache.maven</groupId>
+                                    <artifactId>maven-project</artifactId>
+                                    <version>2.0.6</version>
+                                    <repositoryType>PLUGIN</repositoryType>
+                                </DynamicDependency>
+                                <DynamicDependency>
+                                    <groupId>org.apache.maven.shared</groupId>
+                                    <artifactId>maven-filtering</artifactId>
+                                    <version>1.0-beta-4</version>
+                                    <repositoryType>PLUGIN</repositoryType>
+                                </DynamicDependency>
+                                <DynamicDependency>
+                                    <groupId>org.codehaus.plexus</groupId>
+                                    <artifactId>plexus-interpolation</artifactId>
+                                    <version>1.13</version>
+                                    <repositoryType>PLUGIN</repositoryType>
+                                </DynamicDependency>
+                                <DynamicDependency>
+                                    <groupId>com.github.javaparser</groupId>
+                                    <artifactId>javaparser-core</artifactId>
+                                    <version>3.6.12</version>
+                                    <repositoryType>PLUGIN</repositoryType>
+                                </DynamicDependency>
+                                <DynamicDependency>
+                                    <groupId>org.codehaus.plexus</groupId>
+                                    <artifactId>plexus-utils</artifactId>
+                                    <version>1.1</version>
+                                    <repositoryType>PLUGIN</repositoryType>
+                                </DynamicDependency>
+                                <DynamicDependency>
+                                    <groupId>org.codehaus.plexus</groupId>
+                                    <artifactId>plexus-container-default</artifactId>
+                                    <version>1.0-alpha-9</version>
+                                    <repositoryType>PLUGIN</repositoryType>
+                                </DynamicDependency>
+                                <DynamicDependency>
+                                    <groupId>org.scala-tools</groupId>
+                                    <artifactId>maven-scala-plugin</artifactId>
+                                    <version>2.15.2</version>
+                                    <repositoryType>PLUGIN</repositoryType>
+                                </DynamicDependency>
+                                <DynamicDependency>
+                                    <groupId>org.scala-lang.modules</groupId>
+                                    <artifactId>scala-xml_2.12</artifactId>
+                                    <version>1.0.6</version>
+                                    <repositoryType>PLUGIN</repositoryType>
+                                </DynamicDependency>
+                            </dynamicDependencies>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <phase>initialize</phase>
+                                <goals>
+                                    <goal>resolve-dependencies</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
         <profile>
             <id>default</id>
             <!-- run only non-confidential, relatively fast tests -->

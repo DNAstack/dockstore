@@ -25,6 +25,7 @@ AndroidManifest.xml
 # virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
 hs_err_pid*
 /target/
+!.mvn/wrapper/maven-wrapper.jar
 dependency-reduced-pom.xml
 hello-world.yml
 dockstore-webservice/target/
@@ -60,3 +61,6 @@ dockstore-integration-testing/src/test/resources/dockstoreTest.yml
 
 # The tarball of the above three confidential files
 dockstore-integration-testing/src/test/resources/secrets.tar
+
+### CI/CD Scripts ###
+target/

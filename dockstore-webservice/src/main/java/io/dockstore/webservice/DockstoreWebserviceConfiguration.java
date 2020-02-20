@@ -16,15 +16,13 @@
 
 package io.dockstore.webservice;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.cache.CacheBuilderSpec;
+import io.dockstore.webservice.core.OIDCProvider;
 import io.dropwizard.Configuration;
 import io.dropwizard.client.HttpClientConfiguration;
 import io.dropwizard.db.DataSourceFactory;
@@ -56,14 +54,16 @@ public class DockstoreWebserviceConfiguration extends Configuration {
     @NotEmpty
     private String template;
 
+    @NotNull
+    private Boolean autoRegister;
+
     @NotEmpty
     private String quayClientID;
 
     @NotEmpty
     private String githubClientID;
 
-    @NotEmpty
-    private String googleClientID;
+    private OIDCProvider oidcProvider;
 
     @NotEmpty
     private String gitlabClientID;
@@ -84,11 +84,6 @@ public class DockstoreWebserviceConfiguration extends Configuration {
     @NotEmpty
     private String githubClientSecret;
 
-    @NotEmpty
-    private String googleRedirectURI;
-
-    @NotEmpty
-    private String googleClientSecret;
 
     @NotEmpty
     private String gitlabRedirectURI;
@@ -132,8 +127,6 @@ public class DockstoreWebserviceConfiguration extends Configuration {
 
     private String authorizerType = null;
 
-    private List<String> externalGoogleClientIdPrefixes = new ArrayList<>();
-
     @Valid
     @NotNull
     private UIConfig uiConfig;
@@ -166,6 +159,14 @@ public class DockstoreWebserviceConfiguration extends Configuration {
     @JsonProperty
     public void setTemplate(String template) {
         this.template = template;
+    }
+
+    public Boolean getAutoRegister() {
+        return autoRegister;
+    }
+
+    public void setAutoRegister(Boolean autoRegister) {
+        this.autoRegister = autoRegister;
     }
 
     /**
@@ -420,31 +421,59 @@ public class DockstoreWebserviceConfiguration extends Configuration {
         this.sqsURL = sqsURL;
     }
 
+    /*
     @JsonProperty
-    public String getGoogleClientID() {
-        return googleClientID;
+    public String getOAuthEmailKey() {
+        return oAuthEmailKey;
     }
 
-    public void setGoogleClientID(String googleClientID) {
-        this.googleClientID = googleClientID;
-    }
-
-    @JsonProperty
-    public String getGoogleRedirectURI() {
-        return googleRedirectURI;
-    }
-
-    public void setGoogleRedirectURI(String googleRedirectURI) {
-        this.googleRedirectURI = googleRedirectURI;
+    public void setOAuthEmailKey(String oAuthEmailKey) {
+        this.oAuthEmailKey = oAuthEmailKey;
     }
 
     @JsonProperty
-    public String getGoogleClientSecret() {
-        return googleClientSecret;
+    public String getOAuthProviderName() {
+        return oAuthProviderName;
     }
 
-    public void setGoogleClientSecret(String googleClientSecret) {
-        this.googleClientSecret = googleClientSecret;
+    public void setOAuthProviderName(String oAuthProviderName) {
+        this.oAuthProviderName = oAuthProviderName;
+    }
+
+    @JsonProperty
+    public String getOAuthClientID() {
+        return oAuthClientID;
+    }
+    public void setOAuthClientID(String oAuthClientID) {
+        this.oAuthClientID = oAuthClientID;
+    }
+
+    @JsonProperty
+    public String getOAuthRedirectURI() {
+        return oAuthRedirectURI;
+    }
+
+    public void setOAuthRedirectURI(String oAuthRedirectURI) {
+        this.oAuthRedirectURI = oAuthRedirectURI;
+    }
+
+    @JsonProperty
+    public String getOAuthClientSecret() {
+        return oAuthClientSecret;
+    }
+
+    public void setOAuthClientSecret(String oAuthClientSecret) {
+        this.oAuthClientSecret = oAuthClientSecret;
+    }
+*/
+
+    @JsonProperty
+    public OIDCProvider getOidcProvider() {
+        return oidcProvider;
+    }
+
+    public void setOidcProvider(OIDCProvider oidcProvider) {
+        this.oidcProvider = oidcProvider;
     }
 
     @JsonProperty("authorizerType")
@@ -463,20 +492,6 @@ public class DockstoreWebserviceConfiguration extends Configuration {
 
     public void setSamConfiguration(SamConfiguration samConfiguration) {
         this.samConfiguration = samConfiguration;
-    }
-
-    /**
-     * A list of a additional Google client ids that Dockstore will accept google tokens from. These ids are in addition
-     * to getGoogleClientID, and is intended for any external Google clients that Dockstore will accept tokens from.
-     * @return a list of google client ids
-     */
-    @JsonProperty("externalGoogleClientIdPrefixes")
-    public List<String> getExternalGoogleClientIdPrefixes() {
-        return externalGoogleClientIdPrefixes;
-    }
-
-    public void setExternalGoogleClientIdPrefixes(List<String> externalGoogleClientIdPrefixes) {
-        this.externalGoogleClientIdPrefixes = externalGoogleClientIdPrefixes;
     }
 
     @JsonProperty
@@ -584,6 +599,49 @@ public class DockstoreWebserviceConfiguration extends Configuration {
         }
     }
 
+    /*
+    public static class UserInfo {
+        private String name;
+
+        private String email;
+
+        private String avatarURL;
+
+        private String username;
+
+        public String getName() {
+            return name;
+        }
+
+        public void setName(String name) {
+            this.name = name;
+        }
+
+        public String getEmail() {
+            return email;
+        }
+
+        public void setEmail(String email) {
+            this.email = email;
+        }
+
+        public String getAvatarURL() {
+            return avatarURL;
+        }
+
+        public void setAvatarURL(String avatarURL) {
+            this.avatarURL = avatarURL;
+        }
+
+        public String getUsername() {
+            return username;
+        }
+
+        public void setUsername(String username) {
+            this.username = username;
+        }
+    }
+    */
     public static class LimitConfig {
         private Integer workflowLimit;
         private Integer workflowVersionLimit;

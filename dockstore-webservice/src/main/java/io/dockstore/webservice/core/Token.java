@@ -73,7 +73,7 @@ public class Token implements Comparable<Token> {
     @ApiModelProperty(value = "Source website for this token", position = 1, dataType = "string")
     private TokenType tokenSource;
 
-    @Column(nullable = false)
+    @Column(nullable = false, columnDefinition = "text")
     @ApiModelProperty(value = "Contents of the access token", position = 2)
     private String content;
 
@@ -81,7 +81,7 @@ public class Token implements Comparable<Token> {
     @ApiModelProperty(value = "When an integrated service is not aware of the username, we store it", position = 3)
     private String username;
 
-    @Column
+    @Column(columnDefinition = "text")
     @ApiModelProperty(position = 4)
     private String refreshToken;
 
@@ -98,7 +98,12 @@ public class Token implements Comparable<Token> {
     @UpdateTimestamp
     private Timestamp dbUpdateDate;
 
+
+    @Column
+    private Timestamp tokenExpiry;
+
     public Token() {
+
     }
 
     public Token(String content, String refreshToken, long userId, String username, TokenType tokenSource) {
@@ -205,6 +210,14 @@ public class Token implements Comparable<Token> {
     @JsonProperty
     public Timestamp getDbUpdateDate() {
         return dbUpdateDate;
+    }
+
+    public Timestamp getTokenExpiry() {
+        return tokenExpiry;
+    }
+
+    public void setTokenExpiry(Timestamp tokenExpiry) {
+        this.tokenExpiry = tokenExpiry;
     }
 
     @Override
