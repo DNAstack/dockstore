@@ -20,10 +20,7 @@ zenodoUrl: https://zenodo.org
 gitHubAppId: <fill me in>
 gitHubAppPrivateKeyFile: <fill me in>
 autoRegister: ${DOCKSTORE_AUTOREGISTER}
-# googleClientID: 217706947495-vvshgf7i07beoaiakue115v6iu938io0.apps.googleusercontent.com
-# googleClientSecret: MduMYkdDQLEQ8uN1fHYVilnJ
-# port should match the port where the UI is being hosted, 4200 by default
-# googleRedirectURI: http://localhost:8080/auth/tokens/google
+
 oidcProvider:
   discoveryURL: ${DOCKSTORE_OIDC_DISCOVERYURL}
   providerName: ${DOCKSTORE_OIDC_PROVIDERNAME}
