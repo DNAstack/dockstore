@@ -40,10 +40,6 @@ externalConfig:
   hostname: ${DOCKSTORE_EXTERNAL_HOSTNAME}
   scheme: ${DOCKSTORE_EXTERNAL_SCHEME}
   port: ${DOCKSTORE_EXTERNAL_PORT}
-  # basePath: /api/
-  # hostname: localhost
-  # scheme: http
-  # port: 8080
 
 authenticationCachePolicy: maximumSize=10000, expireAfterAccess=10m 
 
