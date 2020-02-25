@@ -22,7 +22,6 @@ app_name=$(validate_arg "app name" ${2})
 app_version=$(validate_arg "app version" ${3})
 
 # FIXME this is a prototype of how we will do pre-deploy jobs (mostly liquibase update).
-#cp src/main/resources/db/changelog/db.changelog-master.yaml ci/predeploy/db.changelog-master.yaml
-#
-#(cd ci/predeploy && docker build -t ${target_image_name} .)
+cp dockstore-webservice/src/main/resources/db/changelog/db.changelog-master.yaml ci/predeploy/db.changelog-master.yaml
+(cd ci/predeploy && docker build -t ${target_image_name} .)
 
