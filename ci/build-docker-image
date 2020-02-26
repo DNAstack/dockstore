@@ -34,7 +34,7 @@ mkdir -p ${docker_context_dir}/.m2
 cp -rp .mvn mvnw pom.xml checkstyle*.xml ${docker_context_dir}
 cp -a dockstore-webservice/src ${docker_context_dir}/dockstore-webservice/
 cp -rp dockstore-webservice/pom.xml ${docker_context_dir}/dockstore-webservice
-
+cp -rp dockstore-webservice/dockstore.yml ${docker_context_dir}/dockstore-webservice
 cp -a dockstore-language-plugin-parent/src ${docker_context_dir}/dockstore-language-plugin-parent/
 cp -rp dockstore-language-plugin-parent/pom.xml ${docker_context_dir}/dockstore-language-plugin-parent
 

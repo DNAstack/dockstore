@@ -72,5 +72,6 @@ ARG APP_NAME
 ARG APP_VERSION
 
 COPY --from=0 /build/dockstore-webservice/target/dockstore-webservice-${APP_VERSION}.jar /app.jar
+ADD target/dockstore-webservice/dockstore.yml /dockstore.yml
 EXPOSE 8080
-ENTRYPOINT ["java", "-jar", "app.jar", "server", "dockstore-webservice/dockstore.yml"]
+ENTRYPOINT ["java", "-jar", "app.jar", "server", "dockstore.yml"]
