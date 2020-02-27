@@ -50,6 +50,8 @@ server:
   adminConnectors:
     - type: http
       port: 8001
+  requestLog:
+    appenders: []
 
 limitConfig:
   workflowLimit: 10
