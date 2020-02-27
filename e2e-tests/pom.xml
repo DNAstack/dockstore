@@ -3,12 +3,12 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
-	<groupId>com.dnastack.wallet</groupId>
-	<artifactId>wallet-e2e-tests</artifactId>
+	<groupId>com.dnastack.dockstore</groupId>
+	<artifactId>dockstore-e2e-tests</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<packaging>jar</packaging>
 
-	<description>End-to-end tests of Wallet</description>
+	<description>End-to-end tests of Dockstore TRS</description>
 
     <parent>
         <groupId>org.springframework.boot</groupId>
