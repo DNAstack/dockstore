@@ -326,200 +326,6 @@ public class TokenResource implements AuthenticatedResourceInterface, SourceCont
         JsonObject userData = satellizerObject.get("userData").getAsJsonObject();
         return userData.has("register") && userData.get("register").getAsBoolean();
     }
-    /*
-
-    private static class OAuthTokens{
-        private final String accessToken;
-        private final String refreshToken;
-
-        public OAuthTokens(String accessToken, String refreshToken) {
-            this.accessToken = accessToken;
-            this.refreshToken = refreshToken;
-        }
-
-        public String getAccessToken() {
-            return accessToken;
-        }
-
-        public String getRefreshToken() {
-            return refreshToken;
-        }
-    }
-
-    private JwtClaims getJwtClaims(String jwt){  // decryption key resolver to the builder.
-
-        Jwts.parser()         // (1)
-            .setSigningKey(key)         // (2)
-            .parseClaimsJws(jwsString);
-
-        JsonToken token;
-        token.getIssuer();
-        JwtConsumer jwtConsumer = new JwtConsumerBuilder()
-                .setRequireExpirationTime() // the JWT must have an expiration time
-                .setAllowedClockSkewInSeconds(30) // allow some leeway in validating time based claims to account for clock skew
-                .setRequireSubject() // the JWT must have a subject claim
-                .setExpectedIssuer("Issuer") // whom the JWT needs to have been issued by
-                .setExpectedAudience("Audience") // to whom the JWT is intended for
-                .setVerificationKey(rsaJsonWebKey.getKey()) // verify the signature with the public key
-                .setJwsAlgorithmConstraints( // only allow the expected signature algorithm(s) in the given context
-                                             ConstraintType.WHITELIST, AlgorithmIdentifiers.RSA_USING_SHA256) // which is only RS256 here
-                .build(); // create the JwtConsumer instance
-
-        try
-        {
-            //  Validate the JWT and process it to the Claims
-            JwtClaims jwtClaims = jwtConsumer.processToClaims(jwt);
-            System.out.println("JWT validation succeeded! " + jwtClaims);
-        }
-
-    }
-
-    private String getEmailFromOAuthAccessToken(String jwt){
-
-    }
-
-    private OAuthTokens getOAuthTokens(Optional<User> authUser, String satellizerJson, String clientId, String clientSecret) {
-        Gson gson = new Gson();
-        JsonElement element = gson.fromJson(satellizerJson, JsonElement.class);
-        JsonObject satellizerObject = element.getAsJsonObject();
-        final String code = getCodeFromSatellizerObject(satellizerObject);
-        final String redirectUri = getRedirectURIFromSatellizerObject(satellizerObject);
-        final boolean registerUser = getRegisterFromSatellizerObject(satellizerObject);
-        TokenResponse tokenResponse = GoogleHelper.getTokenResponse(clientId, clientSecret, code, redirectUri);
-        String accessToken = tokenResponse.getAccessToken();
-        String refreshToken = tokenResponse.getRefreshToken();
-        LOG.info("Token expires in " + tokenResponse.getExpiresInSeconds().toString() + " seconds.");
-
-        String email = isGoogle ? getUserInfoFromGoogleAccessToken(accessToken).getEmail() : getEmailFromToken(accessToken);
-
-
-        long userID;
-        Token dockstoreToken = null;
-        Token googleToken = null;
-        String googleLoginName = userinfo.getEmail();
-        User user = userDAO.findByGoogleEmail(googleLoginName);
-
-        if (registerUser && authUser.isEmpty()) {
-            if (user == null) {
-                user = new User();
-                // Pull user information from Google
-                user.setUsername(userinfo.getEmail());
-                userID = userDAO.create(user);
-            } else {
-                throw new CustomWebApplicationException("User already exists, cannot register new user",
-                                                        HttpStatus.SC_FORBIDDEN);
-            }
-        } else {
-            if (authUser.isPresent()) {
-                userID = authUser.get().getId();
-            } else if (user != null) {
-                userID = user.getId();
-            } else {
-                throw new CustomWebApplicationException("Login failed, you may need to register an account",
-                                                        HttpStatus.SC_UNAUTHORIZED);
-            }
-
-            List<Token> tokens = tokenDAO.findDockstoreByUserId(userID);
-            if (!tokens.isEmpty()) {
-                dockstoreToken = tokens.get(0);
-            }
-
-            tokens = tokenDAO.findGoogleByUserId(userID);
-            if (!tokens.isEmpty()) {
-                googleToken = tokens.get(0);
-            }
-        }
-
-        user = userDAO.findById(userID);
-        acceptTOSAndPrivacyPolicy(user);
-
-        if (dockstoreToken == null) {
-            LOG.info("Could not find user's dockstore token. Making new one...");
-            dockstoreToken = createDockstoreToken(userID, user.getUsername());
-        }
-
-        if (googleToken == null) {
-            LOG.info("Could not find user's Google token. Making new one...");
-            // CREATE GOOGLE TOKEN
-            googleToken = new Token(accessToken, refreshToken, userID, googleLoginName, TokenType.GOOGLE_COM);
-            tokenDAO.create(googleToken);
-            // Update user profile too
-            user = userDAO.findById(userID);
-            GoogleHelper.updateUserFromGoogleUserinfoplus(userinfo, user);
-            LOG.info("Google token created for {}", googleLoginName);
-        } else {
-            // Update tokens if exists
-            googleToken.setContent(accessToken);
-            googleToken.setRefreshToken(refreshToken);
-            tokenDAO.update(googleToken);
-        }
-        return dockstoreToken;
-
-    }
-
-    private User getUserFromGoogleProfile(String accessToken){
-        Userinfoplus userinfo = getUserInfoFromGoogleAccessToken(accessToken);
-        long userID;
-        Token dockstoreToken = null;
-        Token googleToken = null;
-        String googleLoginName = userinfo.getEmail();
-        User user = userDAO.findByGoogleEmail(googleLoginName);
-
-        if (registerUser && authUser.isEmpty()) {
-            if (user == null) {
-                user = new User();
-                // Pull user information from Google
-                user.setUsername(userinfo.getEmail());
-                userID = userDAO.create(user);
-            } else {
-                throw new CustomWebApplicationException("User already exists, cannot register new user", HttpStatus.SC_FORBIDDEN);
-            }
-        } else {
-            if (authUser.isPresent()) {
-                userID = authUser.get().getId();
-            } else if (user != null) {
-                userID = user.getId();
-            } else {
-                throw new CustomWebApplicationException("Login failed, you may need to register an account", HttpStatus.SC_UNAUTHORIZED);
-            }
-
-            List<Token> tokens = tokenDAO.findDockstoreByUserId(userID);
-            if (!tokens.isEmpty()) {
-                dockstoreToken = tokens.get(0);
-            }
-
-            tokens = tokenDAO.findGoogleByUserId(userID);
-            if (!tokens.isEmpty()) {
-                googleToken = tokens.get(0);
-            }
-        }
-
-        user = userDAO.findById(userID);
-        acceptTOSAndPrivacyPolicy(user);
-
-        if (dockstoreToken == null) {
-            LOG.info("Could not find user's dockstore token. Making new one...");
-            dockstoreToken = createDockstoreToken(userID, user.getUsername());
-        }
-
-        if (googleToken == null) {
-            LOG.info("Could not find user's Google token. Making new one...");
-            // CREATE GOOGLE TOKEN
-            googleToken = new Token(accessToken, refreshToken, userID, googleLoginName, TokenType.GOOGLE_COM);
-            tokenDAO.create(googleToken);
-            // Update user profile too
-            user = userDAO.findById(userID);
-            GoogleHelper.updateUserFromGoogleUserinfoplus(userinfo, user);
-            LOG.info("Google token created for {}", googleLoginName);
-        } else {
-            // Update tokens if exists
-            googleToken.setContent(accessToken);
-            googleToken.setRefreshToken(refreshToken);
-            tokenDAO.update(googleToken);
-        }
-        return dockstoreToken;
-    }
-    */
 
     /**
      * Adds a OIDC token to the existing user if user is authenticated already.
@@ -567,11 +373,11 @@ public class TokenResource implements AuthenticatedResourceInterface, SourceCont
             //Userinfoplus userinfo = getUserInfoFromGoogleAccessToken(accessToken);
             long userID;
             Token dockstoreToken = null;
-            Token googleToken = null;
+            Token oidcToken = null;
             //String googleLoginName = userinfo.getEmail();
             User.Profile userProfile = OidcHelper.getUserProfile(tokenResponse.getAccessToken())
                                                  .orElseThrow(() -> new CustomWebApplicationException("Can't locate user information when completing OIDC code flow for " + oidcProviderName, HttpStatus.SC_INTERNAL_SERVER_ERROR));
-            User user = userDAO.findByGoogleEmail(userProfile.email);
+            User user = userDAO.findByOidcEmail(userProfile.email);
 
             if (((autoRegister && user == null) || registerUser) && authUser.isEmpty()) {
                 if (user == null) {
@@ -597,9 +403,9 @@ public class TokenResource implements AuthenticatedResourceInterface, SourceCont
                     dockstoreToken = tokens.get(0);
                 }
 
-                tokens = tokenDAO.findGoogleByUserId(userID);
+                tokens = tokenDAO.findOidcByUserId(userID);
                 if (!tokens.isEmpty()) {
-                    googleToken = tokens.get(0);
+                    oidcToken = tokens.get(0);
                 }
             }
 
@@ -607,19 +413,17 @@ public class TokenResource implements AuthenticatedResourceInterface, SourceCont
             acceptTOSAndPrivacyPolicy(user);
 
             if (dockstoreToken == null) {
-                LOG.info("Could not find user's dockstore token. Making new one...");
                 dockstoreToken = createDockstoreToken(userID, user.getUsername());
             }
 
-            if (googleToken == null) {
-                LOG.info("Could not find user's Google token. Making new one...");
+            if (oidcToken == null) {
                 // CREATE GOOGLE TOKEN
-                googleToken = new Token(tokenResponse.getAccessToken(),
+                oidcToken = new Token(tokenResponse.getAccessToken(),
                                         tokenResponse.getRefreshToken(),
                                         userID,
                                         userProfile.email,
                                         TokenType.OIDC);
-                tokenDAO.create(googleToken);
+                tokenDAO.create(oidcToken);
                 // Update user profile too
                 user = userDAO.findById(userID);
                 user.setAvatarUrl(userProfile.avatarURL);
@@ -628,10 +432,10 @@ public class TokenResource implements AuthenticatedResourceInterface, SourceCont
                 LOG.info("Google token created for {}", userProfile.email);
             } else {
                 // Update tokens if exists
-                googleToken.setContent(tokenResponse.getAccessToken());
-                googleToken.setRefreshToken(tokenResponse.getRefreshToken());
-                googleToken.setTokenExpiry(Timestamp.from(Instant.now().plusSeconds(tokenResponse.getExpiresInSeconds() - TOKEN_EXPIRY_SKEW_SECONDS)));
-                tokenDAO.update(googleToken);
+                oidcToken.setContent(tokenResponse.getAccessToken());
+                oidcToken.setRefreshToken(tokenResponse.getRefreshToken());
+                oidcToken.setTokenExpiry(Timestamp.from(Instant.now().plusSeconds(tokenResponse.getExpiresInSeconds() - TOKEN_EXPIRY_SKEW_SECONDS)));
+                tokenDAO.update(oidcToken);
             }
             return dockstoreToken;
         } catch (OidcClientException clientException) {

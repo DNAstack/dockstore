@@ -1,11 +1,22 @@
 package io.dockstore.webservice.helpers;
 
 import java.io.IOException;
+import java.security.interfaces.RSAPublicKey;
 import java.sql.Timestamp;
 import java.time.Instant;
 import java.util.Map;
 import java.util.Optional;
 
+import com.auth0.jwk.Jwk;
+import com.auth0.jwk.JwkException;
+import com.auth0.jwk.JwkProvider;
+import com.auth0.jwk.UrlJwkProvider;
+import com.auth0.jwt.JWT;
+import com.auth0.jwt.JWTVerifier;
+import com.auth0.jwt.algorithms.Algorithm;
+import com.auth0.jwt.exceptions.JWTDecodeException;
+import com.auth0.jwt.exceptions.TokenExpiredException;
+import com.auth0.jwt.interfaces.DecodedJWT;
 import com.google.api.client.auth.oauth2.AuthorizationCodeFlow;
 import com.google.api.client.auth.oauth2.BearerToken;
 import com.google.api.client.auth.oauth2.ClientParametersAuthentication;
@@ -141,4 +152,28 @@ public final class OidcHelper {
     //        Map<String, User.Profile> userProfile = user.getUserProfiles();
     //        userProfile.put(TokenType.OIDC.toString(), profile);
     //    }
+
+    /**
+     * Verifies the given JWT token.
+     * @param token The JWT token to verify.
+     * @throws TokenExpiredException If the token is expired.
+     * @throws IllegalArgumentException If the token is otherwise invalid.
+     */
+    public static DecodedJWT verifyAndDecodeJwt(String token) throws TokenExpiredException, IllegalArgumentException, JWTDecodeException {
+
+        try {
+            DecodedJWT jwt = JWT.decode(token);
+            JwkProvider provider = new UrlJwkProvider(getOidcEndpoints().getJwksUri());
+            Jwk jwk = provider.get(jwt.getKeyId());
+            Algorithm algorithm = Algorithm.RSA256((RSAPublicKey) jwk.getPublicKey(), null);
+
+            JWTVerifier verifier = JWT.require(algorithm)
+                                      .withIssuer(getOidcEndpoints().getIssuer())
+                                      .withAudience(getOidcProvider().getValidAudiences())
+                                      .build(); //Reusable verifier instance
+            return verifier.verify(jwt);
+        } catch (JwkException e) {
+            throw new IllegalArgumentException("Invalid token");
+        }
+    }
 }

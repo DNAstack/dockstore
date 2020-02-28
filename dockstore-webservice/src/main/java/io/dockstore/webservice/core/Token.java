@@ -50,9 +50,10 @@ import org.hibernate.annotations.UpdateTimestamp;
 @NamedQueries({
     @NamedQuery(name = "io.dockstore.webservice.core.Token.findByContent", query = "SELECT t FROM Token t WHERE t.content = :content"),
     @NamedQuery(name = "io.dockstore.webservice.core.Token.findByUserId", query = "SELECT t FROM Token t WHERE t.userId = :userId"),
+    @NamedQuery(name = "io.dockstore.webservice.core.Token.findOidcBySubjectId", query = "SELECT t FROM Token t WHERE t.username = :subjectId AND t.tokenSource = 'OIDC'"),
     @NamedQuery(name = "io.dockstore.webservice.core.Token.findDockstoreByUserId", query = "SELECT t FROM Token t WHERE t.userId = :userId AND t.tokenSource = 'dockstore'"),
     @NamedQuery(name = "io.dockstore.webservice.core.Token.findGithubByUserId", query = "SELECT t FROM Token t WHERE t.userId = :userId AND t.tokenSource = 'github.com'"),
-    @NamedQuery(name = "io.dockstore.webservice.core.Token.findGoogleByUserId", query = "SELECT t FROM Token t WHERE t.userId = :userId AND t.tokenSource = 'google.com'"),
+    @NamedQuery(name = "io.dockstore.webservice.core.Token.findOidcByUserId", query = "SELECT t FROM Token t WHERE t.userId = :userId AND t.tokenSource = 'OIDC'"),
     @NamedQuery(name = "io.dockstore.webservice.core.Token.findQuayByUserId", query = "SELECT t FROM Token t WHERE t.userId = :userId AND t.tokenSource = 'quay.io'"),
     @NamedQuery(name = "io.dockstore.webservice.core.Token.findZenodoByUserId", query = "SELECT t FROM Token t WHERE t.userId = :userId AND t.tokenSource = 'zenodo.org'"),
     @NamedQuery(name = "io.dockstore.webservice.core.Token.findGitlabByUserId", query = "SELECT t FROM Token t WHERE t.userId = :userId AND t.tokenSource = 'gitlab.com'"),
@@ -78,7 +79,7 @@ public class Token implements Comparable<Token> {
     private String content;
 
     @Column(nullable = false)
-    @ApiModelProperty(value = "When an integrated service is not aware of the username, we store it", position = 3)
+    @ApiModelProperty(value = "The OIDC subject identifier for a user, or, if an integrated service is not aware of the username, we store it here", position = 3)
     private String username;
 
     @Column(columnDefinition = "text")

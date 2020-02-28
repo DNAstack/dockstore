@@ -271,7 +271,7 @@ public class DockstoreWebserviceApplication extends Application<DockstoreWebserv
         LOG.info("This is our custom logger saying that we're about to load authenticators");
         // setup authentication to allow session access in authenticators, see https://github.com/dropwizard/dropwizard/pull/1361
         SimpleAuthenticator authenticator = new UnitOfWorkAwareProxyFactory(getHibernate())
-                .create(SimpleAuthenticator.class, new Class[] { TokenDAO.class, UserDAO.class }, new Object[] { tokenDAO, userDAO });
+                .create(SimpleAuthenticator.class, new Class[] { TokenDAO.class, UserDAO.class, Boolean.class }, new Object[] { tokenDAO, userDAO, configuration.getAutoRegister() });
         CachingAuthenticator<String, User> cachingAuthenticator = new CachingAuthenticator<>(environment.metrics(), authenticator,
                 configuration.getAuthenticationCachePolicy());
         environment.jersey().register(new AuthDynamicFeature(

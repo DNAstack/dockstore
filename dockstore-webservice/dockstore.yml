@@ -32,6 +32,8 @@ oidcProvider:
   avatarKey: ${DOCKSTORE_OIDC_AVATARKEY}
   usernameKey: ${DOCKSTORE_OIDC_USERNAMEKEY}
   scopes: ${DOCKSTORE_OIDC_SCOPES}
+  validAudiences:
+    - ${DOCKSTORE_OIDC_VALID_AUDIENCES}
 
 #     * This config defines values that define the webservice from the outside world.
 #     * Most notably, for swagger. But also to configure generated RSS paths and TRS paths

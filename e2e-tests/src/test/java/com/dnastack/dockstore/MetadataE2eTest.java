@@ -1,4 +1,4 @@
-package com.dnastack.wallet;
+package com.dnastack.dockstore;
 
 import org.junit.Test;
 
@@ -6,7 +6,7 @@ import static io.restassured.RestAssured.given;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.notNullValue;
 
-public class ActuatorE2eTest extends BaseE2eTest {
+public class MetadataE2eTest extends BaseE2eTest {
     @Test
     public void appNameAndVersionShouldBeExposed() {
         given()

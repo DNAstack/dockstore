@@ -16,10 +16,18 @@
 
 package io.dockstore.webservice;
 
+import java.sql.Timestamp;
+import java.time.Instant;
+import java.util.Map;
 import java.util.Optional;
 
+import com.auth0.jwt.exceptions.JWTDecodeException;
+import com.auth0.jwt.exceptions.TokenExpiredException;
+import com.auth0.jwt.interfaces.DecodedJWT;
 import io.dockstore.webservice.core.Token;
+import io.dockstore.webservice.core.TokenType;
 import io.dockstore.webservice.core.User;
+import io.dockstore.webservice.helpers.OidcHelper;
 import io.dockstore.webservice.jdbi.TokenDAO;
 import io.dockstore.webservice.jdbi.UserDAO;
 import io.dropwizard.auth.Authenticator;
@@ -32,19 +40,30 @@ import org.slf4j.LoggerFactory;
  * @author xliu
  */
 public class SimpleAuthenticator implements Authenticator<String, User> {
+
     private static final Logger LOG = LoggerFactory.getLogger(SimpleAuthenticator.class);
-
-    private final TokenDAO dao;
+    private static final long MAX_DOCKER_TOKEN_LENGTH = 255; // max length of a docker token.
+    private final TokenDAO tokenDAO;
     private final UserDAO userDAO;
+    private final boolean autoRegister;
 
-    SimpleAuthenticator(TokenDAO dao, UserDAO userDAO) {
-        this.dao = dao;
+    SimpleAuthenticator(TokenDAO tokenDAO, UserDAO userDAO, Boolean autoRegisterUsers) {
+        this.tokenDAO = tokenDAO;
         this.userDAO = userDAO;
+        this.autoRegister = autoRegisterUsers;
+    }
+
+    private void updateToken(Token token, String tokenContent, DecodedJWT decodedJWT) {
+        token.setContent(tokenContent);
+        token.setRefreshToken(null);
+        Instant expiresAt = decodedJWT.getExpiresAt().toInstant();
+        token.setTokenExpiry(Timestamp.from(expiresAt));
+        tokenDAO.update(token);
     }
 
     /**
      * Authenticates the credentials.
-     *
+     * <p>
      * Valid credentials can either be a Dockstore token or a Google access token, if the Google access token
      * is issued against a whitelisted Google client id.
      *
@@ -55,42 +74,68 @@ public class SimpleAuthenticator implements Authenticator<String, User> {
     @Override
     public Optional<User> authenticate(String tokenContent) {
         LOG.debug("SimpleAuthenticator called with {}", tokenContent);
-        final Token token = dao.findByContent(tokenContent);
-        if (token != null) { // It's a valid Dockstore token
+
+        Token token;
+        //is the token a JWT from the configured OIDC provider?
+        try {
+            DecodedJWT decodedJWT = OidcHelper.verifyAndDecodeJwt(tokenContent);
+            token = tokenDAO.findOidcBySubjectId(decodedJWT.getSubject());
+            if (token != null) {
+                updateToken(token, tokenContent, decodedJWT);
+                User user = userDAO.findById(token.getUserId());
+                if (user == null) {
+                    return Optional.empty();
+                }
+                initializeUserProfiles(user);
+                return Optional.of(user);
+            } else {
+                //Token is valid, but there is either (a) nothing linking it to the user, or (b) the user does not exist.
+                User.Profile userProfile = OidcHelper.getUserProfile(tokenContent).orElse(null);
+                if (userProfile == null) {
+                    //couldn't get the needed user information from the token (via OIDC userinfo endpoint)
+                    return Optional.empty();
+                }
+
+                User user = userDAO.findByOidcEmail(userProfile.email);
+                long userId;
+                if (user == null) {
+                    if (!autoRegister) {
+                        return Optional.empty();
+                    }
+                    user = new User();
+                    user.setUsername(userProfile.email);
+                    userId = userDAO.create(user);
+                } else {
+                    userId = user.getId();
+                }
+
+                initializeUserProfiles(user);
+                // CREATE GOOGLE TOKEN
+                Token oidcToken = new Token(tokenContent, null, userId, decodedJWT.getSubject(), TokenType.OIDC);
+                tokenDAO.create(oidcToken);
+                // Update user profile too
+                user = userDAO.findById(userId);
+                user.setAvatarUrl(userProfile.avatarURL);
+                Map<String, User.Profile> userProfiles = user.getUserProfiles();
+                userProfiles.put(TokenType.OIDC.toString(), userProfile);
+                return Optional.of(user);
+            }
+        } catch (JWTDecodeException jde) {
+            //token might still be a valid dockstore token.
+            if (tokenContent.length() > MAX_DOCKER_TOKEN_LENGTH) {
+                //Dockstore tokens are short.  If the token is too long, it's not a valid token.
+                return Optional.empty();
+            }
+            token = tokenDAO.findByContent(tokenContent);
             User byId = userDAO.findById(token.getUserId());
             if (byId.isBanned()) {
                 return Optional.empty();
             }
             initializeUserProfiles(byId);
             return Optional.of(byId);
-        } else { // It might be an OIDC access token
-            LOG.warn("Could not locate token record corresponding to content " + tokenContent);
+
+        } catch (TokenExpiredException | IllegalArgumentException ex) {
             return Optional.empty();
-            //            return OidcHelper.getUserProfile(credentials)
-            //                    .map(userProfile -> {
-            //                        final String email = userProfile.email;
-            //                        User user = userDAO.findByGoogleEmail(email);
-            //                        if (user == null) {
-            //                            user = createUser(userProfile);
-            //                        }
-            //                        user.setTemporaryCredential(credentials);
-            //                        initializeUserProfiles(user);
-            //                        return Optional.of(user);
-            //                    }).filter(user -> !user.get().isBanned())
-            //                    .orElse(Optional.empty());
-            //
-            //            return userinfoPlusFromToken(credentials)
-            //                    .map(userinfoPlus -> {
-            //                        final String email = userinfoPlus.getEmail();
-            //                        User user = userDAO.findByGoogleEmail(email);
-            //                        if (user == null) {
-            //                            user = createUser(userinfoPlus);
-            //                        }
-            //                        user.setTemporaryCredential(credentials);
-            //                        initializeUserProfiles(user);
-            //                        return Optional.of(user);
-            //                    }).filter(user -> !user.get().isBanned())
-            //                    .orElse(Optional.empty());
         }
     }
 
