@@ -901,7 +901,7 @@ public class UserResource implements AuthenticatedResourceInterface {
      * @param userId    The user's ID
      */
     private void updateOidcAccessToken(Long userId) {
-        List<Token> oidcTokenByUserId = tokenDAO.findGoogleByUserId(userId);
+        List<Token> oidcTokenByUserId = tokenDAO.findOidcByUserId(userId);
         if (!oidcTokenByUserId.isEmpty()) {
             Token oidcToken = oidcTokenByUserId.get(0);
             Optional<String> validAccessToken = OidcHelper.getValidAccessToken(oidcToken);

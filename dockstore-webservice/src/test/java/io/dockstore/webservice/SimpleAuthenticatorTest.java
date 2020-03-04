@@ -30,7 +30,7 @@ public class SimpleAuthenticatorTest {
     public void setUp() {
         tokenDAO = Mockito.mock(TokenDAO.class);
         userDAO = Mockito.mock(UserDAO.class);
-        simpleAuthenticator = spy(new SimpleAuthenticator(tokenDAO, userDAO));
+        simpleAuthenticator = spy(new SimpleAuthenticator(tokenDAO, userDAO, false, null));
         doNothing().when(simpleAuthenticator).initializeUserProfiles(user);
     }
 

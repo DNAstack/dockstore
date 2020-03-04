@@ -65,6 +65,8 @@ public class DockstoreWebserviceConfiguration extends Configuration {
 
     private OIDCProvider oidcProvider;
 
+    private AuthJwt authJwt;
+
     @NotEmpty
     private String gitlabClientID;
 
@@ -83,7 +85,6 @@ public class DockstoreWebserviceConfiguration extends Configuration {
 
     @NotEmpty
     private String githubClientSecret;
-
 
     @NotEmpty
     private String gitlabRedirectURI;
@@ -167,6 +168,14 @@ public class DockstoreWebserviceConfiguration extends Configuration {
 
     public void setAutoRegister(Boolean autoRegister) {
         this.autoRegister = autoRegister;
+    }
+
+    public AuthJwt getAuthJwt() {
+        return authJwt;
+    }
+
+    public void setAuthJwt(AuthJwt authJwt) {
+        this.authJwt = authJwt;
     }
 
     /**
@@ -513,6 +522,7 @@ public class DockstoreWebserviceConfiguration extends Configuration {
      * Most notably, for swagger. But also to configure generated RSS paths and TRS paths
      */
     public class ExternalConfig {
+
         @NotEmpty
         private String hostname;
 
@@ -567,6 +577,7 @@ public class DockstoreWebserviceConfiguration extends Configuration {
     }
 
     public class ElasticSearchConfig {
+
         private String hostname;
         private int port;
 
@@ -588,6 +599,7 @@ public class DockstoreWebserviceConfiguration extends Configuration {
     }
 
     public static class SamConfiguration {
+
         private String basepath;
 
         public String getBasepath() {
@@ -642,7 +654,36 @@ public class DockstoreWebserviceConfiguration extends Configuration {
         }
     }
     */
+
+    public static class AuthJwt {
+
+        @Valid
+        @NotNull
+        private String readWriteScope;
+
+        @Valid
+        @NotNull
+        private String[] audiences;
+
+        public String getReadWriteScope() {
+            return readWriteScope;
+        }
+
+        public void setReadWriteScope(String readWriteScope) {
+            this.readWriteScope = readWriteScope;
+        }
+
+        public String[] getAudiences() {
+            return audiences;
+        }
+
+        public void setAudiences(String[] audiences) {
+            this.audiences = audiences;
+        }
+    }
+
     public static class LimitConfig {
+
         private Integer workflowLimit;
         private Integer workflowVersionLimit;
 
@@ -825,7 +866,6 @@ public class DockstoreWebserviceConfiguration extends Configuration {
             this.gitlabScope = gitlabScope;
         }
 
-
         public String getZenodoAuthUrl() {
             return zenodoAuthUrl;
         }
@@ -849,7 +889,6 @@ public class DockstoreWebserviceConfiguration extends Configuration {
         public void setZenodoScope(String zenodoScope) {
             this.zenodoScope = zenodoScope;
         }
-
 
         public String getGoogleScope() {
             return googleScope;

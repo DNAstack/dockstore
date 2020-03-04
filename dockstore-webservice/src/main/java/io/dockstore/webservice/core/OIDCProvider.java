@@ -23,6 +23,16 @@ public class OIDCProvider {
 
     private String scopes;
 
+    private String[] validAudiences;
+
+    public String[] getValidAudiences() {
+        return validAudiences;
+    }
+
+    public void setValidAudiences(String[] validAudiences) {
+        this.validAudiences = validAudiences;
+    }
+
     public URL getDiscoveryURL() {
         return discoveryURL;
     }

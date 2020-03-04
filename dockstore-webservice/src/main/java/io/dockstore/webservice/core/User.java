@@ -79,7 +79,7 @@ import org.hibernate.annotations.UpdateTimestamp;
 @Table(name = "enduser", uniqueConstraints = @UniqueConstraint(columnNames = { "username" }))
 @NamedQueries({ @NamedQuery(name = "io.dockstore.webservice.core.User.findAll", query = "SELECT t FROM User t"),
     @NamedQuery(name = "io.dockstore.webservice.core.User.findByUsername", query = "SELECT t FROM User t WHERE t.username = :username"),
-    @NamedQuery(name = "io.dockstore.webservice.core.User.findByGoogleEmail", query = "SELECT t FROM User t JOIN t.userProfiles p where( KEY(p) = 'google.com' AND p.email = :email)"),
+    @NamedQuery(name = "io.dockstore.webservice.core.User.findByOidcEmail", query = "SELECT t FROM User t JOIN t.userProfiles p where( KEY(p) = 'OIDC' AND p.email = :email)"),
     @NamedQuery(name = "io.dockstore.webservice.core.User.findByGitHubUsername", query = "SELECT t FROM User t JOIN t.userProfiles p where( KEY(p) = 'github.com' AND p.username = :username)") })
 @SuppressWarnings("checkstyle:magicnumber")
 public class User implements Principal, Comparable<User>, Serializable {
@@ -245,7 +245,7 @@ public class User implements Principal, Comparable<User>, Serializable {
             switch (source) {
             case OIDC:
                 if (!updateOidcMetadata(tokenDAO)) {
-                    throw new CustomWebApplicationException("No Google token found.  Please link a Google token to your account.",
+                    throw new CustomWebApplicationException("No OIDC token found.  Please link an OIDC token to your account.",
                             HttpStatus.SC_FORBIDDEN);
                 }
                 break;
@@ -319,7 +319,7 @@ public class User implements Principal, Comparable<User>, Serializable {
      * @return True if the user has a Google token and updating the Google profile was successful
      */
     private boolean updateOidcMetadata(final TokenDAO tokenDAO) {
-        List<Token> tokensByUserId = tokenDAO.findGoogleByUserId(getId());
+        List<Token> tokensByUserId = tokenDAO.findOidcByUserId(getId());
         if (tokensByUserId.isEmpty()) {
             return false;
         } else {
