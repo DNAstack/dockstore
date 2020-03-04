@@ -21,8 +21,9 @@ import java.time.Instant;
 import java.util.Map;
 import java.util.Optional;
 
+import com.auth0.jwk.JwkException;
 import com.auth0.jwt.exceptions.JWTDecodeException;
-import com.auth0.jwt.exceptions.TokenExpiredException;
+import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import io.dockstore.webservice.core.Token;
 import io.dockstore.webservice.core.TokenType;
@@ -46,11 +47,20 @@ public class SimpleAuthenticator implements Authenticator<String, User> {
     private final TokenDAO tokenDAO;
     private final UserDAO userDAO;
     private final boolean autoRegister;
+    private String[] validAudiences;
+    private String[] jwtScopesToAssert;
 
-    SimpleAuthenticator(TokenDAO tokenDAO, UserDAO userDAO, Boolean autoRegisterUsers) {
+    SimpleAuthenticator(TokenDAO tokenDAO, UserDAO userDAO, Boolean autoRegisterUsers, DockstoreWebserviceConfiguration.AuthJwt authJwtConfig) {
         this.tokenDAO = tokenDAO;
         this.userDAO = userDAO;
         this.autoRegister = autoRegisterUsers;
+        if (authJwtConfig == null) {
+            this.validAudiences = null;
+            this.jwtScopesToAssert = null;
+        } else {
+            this.jwtScopesToAssert = new String[]{authJwtConfig.getReadWriteScope()};
+            this.validAudiences = authJwtConfig.getAudiences();
+        }
     }
 
     private void updateToken(Token token, String tokenContent, DecodedJWT decodedJWT) {
@@ -78,7 +88,7 @@ public class SimpleAuthenticator implements Authenticator<String, User> {
         Token token;
         //is the token a JWT from the configured OIDC provider?
         try {
-            DecodedJWT decodedJWT = OidcHelper.verifyAndDecodeJwt(tokenContent);
+            DecodedJWT decodedJWT = OidcHelper.verifyAndDecodeJwt(tokenContent, jwtScopesToAssert, validAudiences);
             token = tokenDAO.findOidcBySubjectId(decodedJWT.getSubject());
             if (token != null) {
                 updateToken(token, tokenContent, decodedJWT);
@@ -90,7 +100,8 @@ public class SimpleAuthenticator implements Authenticator<String, User> {
                 return Optional.of(user);
             } else {
                 //Token is valid, but there is either (a) nothing linking it to the user, or (b) the user does not exist.
-                User.Profile userProfile = OidcHelper.getUserProfile(tokenContent).orElse(null);
+                //User.Profile userProfile = OidcHelper.getUserProfile(tokenContent).orElse(null);
+                User.Profile userProfile = OidcHelper.getUserProfile(decodedJWT);
                 if (userProfile == null) {
                     //couldn't get the needed user information from the token (via OIDC userinfo endpoint)
                     return Optional.empty();
@@ -127,6 +138,9 @@ public class SimpleAuthenticator implements Authenticator<String, User> {
                 return Optional.empty();
             }
             token = tokenDAO.findByContent(tokenContent);
+            if (token == null) {
+                return Optional.empty();
+            }
             User byId = userDAO.findById(token.getUserId());
             if (byId.isBanned()) {
                 return Optional.empty();
@@ -134,7 +148,14 @@ public class SimpleAuthenticator implements Authenticator<String, User> {
             initializeUserProfiles(byId);
             return Optional.of(byId);
 
-        } catch (TokenExpiredException | IllegalArgumentException ex) {
+        } catch (JWTVerificationException je) {
+            // Token can be parsed, but is invalid
+            // (likely reasons include missing expected scope, issuer, or audience; or expired)
+            LOG.debug("Invalid token", je);
+            return Optional.empty();
+        } catch (JwkException je) {
+            LOG.debug("Invalid jwks endpoint or jwks endpoint returned unexpected result",
+                      je);
             return Optional.empty();
         }
     }
@@ -143,26 +164,5 @@ public class SimpleAuthenticator implements Authenticator<String, User> {
         // Always eagerly load yourself (your User object)
         Hibernate.initialize(user.getUserProfiles());
     }
-
-    //    Optional<Userinfoplus> userinfoPlusFromToken(String credentials) {
-    //        return GoogleHelper.userinfoplusFromToken(credentials);
-    //    }
-
-    //    User createUser(User.Profile userProfile) {
-    //        User user = new User();
-    //        user.setAvatarUrl(userProfile.avatarURL);
-    //        Map<String, User.Profile> userProfiles = user.getUserProfiles();
-    //        userProfiles.put(TokenType.OIDC.toString(), userProfile);
-    //        return user;
-    //
-    //        user.setAvatarUrl(userinfo.getPicture());
-    //        Map<String, User.Profile> userProfile = user.getUserProfiles();
-    //        userProfile.put(TokenType.OIDC.toString(), profile);
-    //        User user = new User();
-    //        user.setAvatarUrl(userinfo.getPicture());
-    //        GoogleHelper.updateUserFromGoogleUserinfoplus(userinfoPlus, user);
-    //        user.setUsername(userinfoPlus.getEmail());
-    //        return user;
-    //    }
 
 }

@@ -20,7 +20,6 @@ zenodoUrl: https://zenodo.org
 gitHubAppId: <fill me in>
 gitHubAppPrivateKeyFile: <fill me in>
 autoRegister: ${DOCKSTORE_AUTOREGISTER}
-
 oidcProvider:
   discoveryURL: ${DOCKSTORE_OIDC_DISCOVERYURL}
   providerName: ${DOCKSTORE_OIDC_PROVIDERNAME}
@@ -31,9 +30,13 @@ oidcProvider:
   nameKey: ${DOCKSTORE_OIDC_NAMEKEY}
   avatarKey: ${DOCKSTORE_OIDC_AVATARKEY}
   usernameKey: ${DOCKSTORE_OIDC_USERNAMEKEY}
-  scopes: ${DOCKSTORE_OIDC_SCOPES}
-  validAudiences:
-    - ${DOCKSTORE_OIDC_VALID_AUDIENCES}
+  scopes: ${DOCKSTORE_OIDC_SCOPES}  #Scopes to REQUEST when user logs in.
+  validAudiences: ${DOCKSTORE_OIDC_VALID_AUDIENCES}
+
+authJwt:  
+    readWriteScope: ${DOCKSTORE_AUTHJWT_READWRITE_SCOPE}
+    audiences: ${DOCKSTORE_OIDC_VALID_AUDIENCES}
+    
 
 #     * This config defines values that define the webservice from the outside world.
 #     * Most notably, for swagger. But also to configure generated RSS paths and TRS paths
